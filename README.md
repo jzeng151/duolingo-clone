@@ -16,27 +16,6 @@ Read these documents in this order before writing any code:
 
 ---
 
-## Who owns what
-
-**Jason** owns the lesson UI:
-- The lesson state machine (`src/lib/lesson-state-machine.ts`)
-- The lesson runner component (`src/components/LessonRunner.tsx`)
-- The feedback drawer (`src/components/FeedbackDrawer.tsx`)
-- The completion screen (`src/components/CompletionScreen.tsx`)
-
-**Bath** owns the backend and data:
-- The database function (`supabase/migrations/002_complete_lesson.sql`)
-- The server action (`src/actions/completeLesson.ts`)
-- The Spanish exercise content (`src/content/spanish-lesson-1.ts`)
-
-**Both together (Day 1 — do this on a call before splitting off):**
-- Project scaffolding (Steps 1–3 in TODOS.md)
-- Exercise types file (`src/content/types.ts`) — this is the shared interface; commit it before splitting
-- Lesson page (`src/app/lesson/page.tsx`) — wires Jason's and Bath's work together
-- CI setup and deploy
-
----
-
 ## Git workflow
 
 1. Never commit directly to `main`.
