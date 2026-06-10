@@ -1,6 +1,12 @@
 import Link from "next/link";
+import SignOutButton from "./components/SignOutButton";
+import { getServerSession } from "../lib/supabase-server";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession();
+  const signedIn = Boolean(session?.user);
+  const userEmail = session?.user?.email;
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(88,204,2,0.16),transparent_24%),linear-gradient(to_bottom_right,#ecfccb,#f8fafc)] text-slate-950">
       <div className="mx-auto max-w-7xl px-6 py-10 sm:px-8 lg:px-12">
@@ -17,12 +23,29 @@ export default function Home() {
             </div>
           </div>
 
-          <Link
-            href="/lesson"
-            className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
-          >
-            Start lesson
-          </Link>
+          {signedIn ? (
+            <div className="flex flex-wrap gap-3">
+              <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700">
+                {userEmail}
+              </span>
+              <SignOutButton />
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center rounded-full border border-slate-950 bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
         </header>
 
         <main className="grid gap-8 lg:grid-cols-[1.4fr_0.9fr] lg:items-start">
