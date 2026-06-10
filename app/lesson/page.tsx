@@ -1,20 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
 import SignOutButton from "../components/SignOutButton";
+import { createServerSupabaseClient } from "../../lib/supabase-server";
 
 export default async function LessonPage() {
-  const reqCookies = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-    {
-      cookies: {
-        getAll: () => reqCookies.getAll().map((cookie) => ({ name: cookie.name, value: cookie.value })),
-      },
-    }
-  );
+  const supabase = await createServerSupabaseClient();
   const { data } = await supabase.auth.getSession();
 
   if (!data.session?.user) {

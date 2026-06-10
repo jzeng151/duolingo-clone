@@ -3,12 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createBrowserClient } from "@supabase/auth-helpers-nextjs";
-
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ""
-);
+import { supabaseBrowser } from "../../lib/supabase-browser";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,31 +13,35 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabaseBrowser.auth.getSession().then(({ data }) => {
       if (data.session) {
         router.replace("/lesson");
       }
     });
-  }, [router, supabase]);
+  }, [router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setLoading(true);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error: signInError } = await supabaseBrowser.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    setLoading(false);
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
 
-    if (signInError) {
-      setError(signInError.message);
-      return;
+      router.push("/lesson");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/lesson");
   }
 
   return (

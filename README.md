@@ -38,6 +38,8 @@ npm run dev
 
 Then open `http://localhost:3000` in your browser.
 
+> Note: This project uses `npm run dev` with `next dev --webpack` because the default Turbopack mode in Next.js 16 caused a PostCSS/Tailwind build issue in this repository.
+
 ---
 
 ## Environment setup
@@ -55,3 +57,14 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 - `SUPABASE_SERVICE_ROLE_KEY` — the privileged key used only in server functions. Found under Settings → API → Project API keys → `service_role`. **Never put this in any file that gets committed to GitHub. Never use it in browser-side code.**
 
 > The `.env.local` file is already in `.gitignore` — it will never be committed. The `.env.example` file is what gets committed; it has the same variable names but no real values.
+## Troubleshooting
+
+### JSON Parsing Error During Build
+
+If Next.js reports a JSON parsing error but all project JSON files are valid, the issue may be caused by a corrupted `.next` cache.
+
+Run:
+
+```bash
+rm -rf .next
+npm run build
