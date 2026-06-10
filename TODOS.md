@@ -75,13 +75,13 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 3: Add login and sign-up ` `
 
-- [ ] ** Add sign-up with email** — Create `src/app/signup/page.tsx`. Build a form with email and password fields. When submitted, call Supabase's `signUp()` function. On success, redirect to `/lesson`.
+- [x] ** Add sign-up with email** — Create `src/app/signup/page.tsx`. Build a form with email and password fields. When submitted, call Supabase's `signUp()` function. On success, redirect to `/lesson`.
 
-- [ ] ** Add login** — Create `src/app/login/page.tsx`. Same idea — email + password form, call Supabase's `signInWithPassword()`, redirect to `/` on success.
+- [x] ** Add login** — Create `src/app/login/page.tsx`. Same idea — email + password form, call Supabase's `signInWithPassword()`, redirect to `/` on success.
 
-- [ ] ** Add a logout button** — Add a "Log out" button to the home page. When clicked, call Supabase's `signOut()` and redirect to `/login`.
+- [x] ** Add a logout button** — Add a "Log out" button to the home page. When clicked, call Supabase's `signOut()` and redirect to `/login`.
 
-- [ ] ** Protect the lesson page** — In `src/app/lesson/page.tsx`, check if there's a logged-in user. If not, redirect to `/login`. Ask an AI: "How do I check if a user is logged in on a Next.js App Router page using Supabase SSR?"
+- [x] ** Protect the lesson page** — In `src/app/lesson/page.tsx`, check if there's a logged-in user. If not, redirect to `/login`. Ask an AI: "How do I check if a user is logged in on a Next.js App Router page using Supabase SSR?"
 
 ---
 
