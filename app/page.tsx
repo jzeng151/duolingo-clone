@@ -85,7 +85,7 @@ export default function Home() {
               the free, fun, and effective way to learn a language!
             </h1>
 
-            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
+            <div className="mt-8 flex flex-col items-start gap-3">
             <Link
               href="/register"
               className="inline-flex items-center justify-center rounded-full bg-feather-green px-8 py-4 text-base font-bold uppercase tracking-wide text-white shadow-md transition-colors hover:bg-feather-green-hover"
