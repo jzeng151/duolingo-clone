@@ -64,8 +64,9 @@ export default function Home() {
               duolingo
             </span>
           </Link>
-          <button className="rounded-full border-2 border-eel px-5 py-2 text-xs font-bold uppercase tracking-wide text-eel transition-colors hover:bg-polar">
+          <button className="flex items-center gap-1 text-sm text-wolf transition-colors hover:text-eel">
             Site language: English
+            <span className="text-xs">▾</span>
           </button>
         </nav>
 
