@@ -8,21 +8,21 @@ This is the build checklist. Tasks are in order — each one builds on the one b
 
 Both of you need to do this before splitting off. It takes about an hour.
 
-- [ ] ** Initialize the app** — In your terminal, run this command exactly:
+- [x] ** Initialize the app** — In your terminal, run this command exactly:
   ```bash
   npx create-next-app@latest duolingo-clone --typescript --tailwind --app --src-dir
   ```
   When it asks questions: say **Yes** to TypeScript, **Yes** to Tailwind, **Yes** to App Router, **Yes** to `src/` directory, **No** to everything else. This creates the blank project.
 
-- [ ] ** Push to GitHub** — Go to github.com, create a new repository called `duolingo-clone`, then run:
+- [x] ** Push to GitHub** — Go to github.com, create a new repository called `duolingo-clone`, then run:
   ```bash
   git remote add origin https://github.com/YOUR_USERNAME/duolingo-clone.git
   git push -u origin main
   ```
 
-- [ ] ** Create a Supabase project** — Go to [supabase.com](https://supabase.com), sign in, click "New project". Name it `duolingo-clone`. Pick any region close to you. Save the generated database password somewhere safe — you can't recover it later.
+- [x] ** Create a Supabase project** — Go to [supabase.com](https://supabase.com), sign in, click "New project". Name it `duolingo-clone`. Pick any region close to you. Save the generated database password somewhere safe — you can't recover it later.
 
-- [ ] ** Add environment variables** — In Supabase, go to **Settings → API**. Copy the three values into a new file called `.env.local` at the root of the project:
+- [x] ** Add environment variables** — In Supabase, go to **Settings → API**. Copy the three values into a new file called `.env.local` at the root of the project:
   ```
   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
@@ -39,7 +39,7 @@ Both of you need to do this before splitting off. It takes about an hour.
   SUPABASE_SERVICE_ROLE_KEY=
   ```
 
-- [ ] ** Install Supabase and confirm it runs** — Run:
+- [x] ** Install Supabase and confirm it runs** — Run:
   ```bash
   npm install @supabase/supabase-js @supabase/ssr
   npm run dev
@@ -63,25 +63,25 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 2: Set up the database
 
-- [ ] ** Create the database tables** — In the Supabase dashboard, go to **SQL Editor** and run the SQL from `ARCHITECTURE.md` → "Database Schema" section. This creates the `users`, `xp_events`, and `streaks` tables.
+- [x] ** Create the database tables** — In the Supabase dashboard, go to **SQL Editor** and run the SQL from `ARCHITECTURE.md` → "Database Schema" section. This creates the `users`, `xp_events`, and `streaks` tables.
 
-- [ ] ** Add the auto-create trigger** — In the same SQL Editor, run the trigger SQL from `ARCHITECTURE.md` → "Auth Trigger" section. This makes sure a `users` row is created automatically whenever someone signs up.
+- [x] ** Add the auto-create trigger** — In the same SQL Editor, run the trigger SQL from `ARCHITECTURE.md` → "Auth Trigger" section. This makes sure a `users` row is created automatically whenever someone signs up.
 
-- [ ] ** Add security rules** — In the Supabase dashboard, go to **Authentication → Policies**. Enable Row Level Security on all three tables and add a policy to each: users can only read rows where `user_id = auth.uid()`.
+- [x] ** Add security rules** — In the Supabase dashboard, go to **Authentication → Policies**. Enable Row Level Security on all three tables and add a policy to each: users can only read rows where `user_id = auth.uid()`.
 
-- [ ] ** Write the lesson-completion database function** — Create a file `supabase/migrations/002_complete_lesson.sql`. This is the function that handles everything when a lesson is finished: saving XP, updating the streak, and making sure it only counts once. The full logic is in `DESIGN-DOC.md` → "Resolved Architecture Decisions → D1" and "ASCII Diagrams → POSTGRES FUNCTION". Paste that logic to an AI and ask it to write the SQL function.
+- [x] ** Write the lesson-completion database function** — Create a file `supabase/migrations/002_complete_lesson.sql`. This is the function that handles everything when a lesson is finished: saving XP, updating the streak, and making sure it only counts once. The full logic is in `DESIGN-DOC.md` → "Resolved Architecture Decisions → D1" and "ASCII Diagrams → POSTGRES FUNCTION". Paste that logic to an AI and ask it to write the SQL function.
 
 ---
 
 ### Step 3: Add login and sign-up ` `
 
-- [ ] ** Add sign-up with email** — Create `src/app/signup/page.tsx`. Build a form with email and password fields. When submitted, call Supabase's `signUp()` function. On success, redirect to `/lesson`.
+- [x] ** Add sign-up with email** — Create `src/app/signup/page.tsx`. Build a form with email and password fields. When submitted, call Supabase's `signUp()` function. On success, redirect to `/lesson`.
 
-- [ ] ** Add login** — Create `src/app/login/page.tsx`. Same idea — email + password form, call Supabase's `signInWithPassword()`, redirect to `/` on success.
+- [x] ** Add login** — Create `src/app/login/page.tsx`. Same idea — email + password form, call Supabase's `signInWithPassword()`, redirect to `/` on success.
 
-- [ ] ** Add a logout button** — Add a "Log out" button to the home page. When clicked, call Supabase's `signOut()` and redirect to `/login`.
+- [x] ** Add a logout button** — Add a "Log out" button to the home page. When clicked, call Supabase's `signOut()` and redirect to `/login`.
 
-- [ ] ** Protect the lesson page** — In `src/app/lesson/page.tsx`, check if there's a logged-in user. If not, redirect to `/login`. Ask an AI: "How do I check if a user is logged in on a Next.js App Router page using Supabase SSR?"
+- [x] ** Protect the lesson page** — In `src/app/lesson/page.tsx`, check if there's a logged-in user. If not, redirect to `/login`. Ask an AI: "How do I check if a user is logged in on a Next.js App Router page using Supabase SSR?"
 
 ---
 
