@@ -70,21 +70,22 @@ export default function Home() {
           </button>
         </nav>
 
-        {/* Center block: mascot + headline + CTAs */}
-        <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+        {/* Center block: mascot (left) + headline/CTAs (right) */}
+        <div className="flex flex-1 items-center justify-center gap-16 px-16">
           {/* Duo owl — large mascot illustration */}
-          <div className="mb-8">
+          <div className="flex-shrink-0">
             <span className="text-[10rem] leading-none">🦉</span>
           </div>
 
-          <h1
-            className="max-w-2xl font-extrabold text-eel"
-            style={{ fontSize: "2.5rem", lineHeight: 1.1, letterSpacing: "-0.02em" }}
-          >
-            the free, fun, and effective way to learn a language!
-          </h1>
+          <div className="flex flex-col items-start text-left">
+            <h1
+              className="max-w-md font-extrabold text-eel"
+              style={{ fontSize: "2.5rem", lineHeight: 1.1, letterSpacing: "-0.02em" }}
+            >
+              the free, fun, and effective way to learn a language!
+            </h1>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/register"
               className="inline-flex items-center justify-center rounded-full bg-feather-green px-8 py-4 text-base font-bold uppercase tracking-wide text-white shadow-md transition-colors hover:bg-feather-green-hover"
@@ -94,6 +95,7 @@ export default function Home() {
             <button className="rounded-full border-2 border-eel px-6 py-3 text-sm font-bold uppercase tracking-wide text-eel transition-colors hover:bg-polar">
               i already have an account
             </button>
+          </div>
           </div>
         </div>
 
