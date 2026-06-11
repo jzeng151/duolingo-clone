@@ -55,12 +55,12 @@ export default function Home() {
            ─────────────────────────────────────────── */}
       <header className="relative flex min-h-screen flex-col items-center bg-snow">
         {/* Nav bar — pinned to top */}
-        <nav className="flex w-full items-center justify-between px-6 py-4 lg:px-8">
+        <nav className="flex w-full items-center justify-between px-16 py-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-feather-green text-lg font-extrabold text-white">
               D
             </span>
-            <span className="text-xl font-extrabold tracking-tight text-eel">
+            <span className="text-xl font-extrabold tracking-tight text-feather-green">
               duolingo
             </span>
           </Link>
