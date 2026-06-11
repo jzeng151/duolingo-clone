@@ -5,19 +5,24 @@ export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     {
       cookies: {
         getAll: () => cookieStore.getAll().map((cookie) => ({ name: cookie.name, value: cookie.value })),
         setAll: (cookieList) => {
-          cookieList.forEach((cookie) => {
-            cookieStore.set({
-              name: cookie.name,
-              value: cookie.value,
-              ...cookie.options,
+          try {
+            cookieList.forEach((cookie) => {
+              cookieStore.set({
+                name: cookie.name,
+                value: cookie.value,
+                ...cookie.options,
+              });
             });
-          });
+          } catch {
+            // Called from a page component, which can't set cookies.
+            // That's okay — middleware handles token refresh instead.
+          }
         },
       },
     }
