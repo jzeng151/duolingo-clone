@@ -87,7 +87,7 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 4: Define the exercise format
 
-- [ ] ** Create the exercise types file** — Create `src/content/types.ts` with this exact content:
+- [x] ** Create the exercise types file** — Create `src/content/types.ts` with this exact content:
   ```typescript
   export type Exercise =
     | { type: 'translate'; prompt: string; answer: string; hint?: string }
@@ -99,7 +99,7 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 5: Build the lesson screen
 
-- [ ] ** Build the lesson state machine** — Create `src/lib/lesson-state-machine.ts`. This is the logic engine for the lesson — it tracks what's happening at every moment. Use this exact structure:
+- [x] ** Build the lesson state machine** — Create `src/lib/lesson-state-machine.ts`. This is the logic engine for the lesson — it tracks what's happening at every moment. Use this exact structure:
   ```typescript
   type LessonState = 'idle' | 'showing_question' | 'feedback_correct' | 'feedback_wrong' | 'done' | 'persisting' | 'complete' | 'error'
   type LessonAction = { type: 'START' } | { type: 'SUBMIT'; answer: string } | { type: 'NEXT' } | { type: 'SAVE_SUCCESS'; xpEarned: number; newStreak: number } | { type: 'SAVE_ERROR' } | { type: 'RETRY' }
