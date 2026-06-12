@@ -119,7 +119,7 @@ Both of you need to do this before splitting off. It takes about an hour.
   - **Success:** show "🔥 X day streak!" and "⚡ +X XP" with a celebration feel
   - **Error:** show "Progress couldn't be saved. Check your connection." with a "Try again" button
 
-- [ ] ** Wire the lesson runner together** — Create `src/components/LessonRunner.tsx`. This component:
+- [x] ** Wire the lesson runner together** — Create `src/components/LessonRunner.tsx`. This component:
   1. Holds the state machine state using React's `useState`
   2. Shows the progress bar at the top
   3. Renders `<QuestionDisplay>` for the current exercise
