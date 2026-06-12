@@ -114,7 +114,7 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 - [X] ** Build the feedback drawer** — Create `src/components/FeedbackDrawer.tsx`. This is the panel that slides up from the bottom after each answer. Green background + checkmark if correct. Red background + correct answer shown if wrong. Full-width "Continue" button. See `DESIGN.md` → "Feedback Drawer" for the exact colors and styling.
 
-- [ ] ** Build the completion screen** — Create `src/components/CompletionScreen.tsx`. Shows after the last question. Displays XP earned and current streak. Has two states:
+- [x] ** Build the completion screen** — Create `src/components/CompletionScreen.tsx`. Shows after the last question. Displays XP earned and current streak. Has two states:
   - **Loading:** show a spinner while the save is in progress
   - **Success:** show "🔥 X day streak!" and "⚡ +X XP" with a celebration feel
   - **Error:** show "Progress couldn't be saved. Check your connection." with a "Try again" button
