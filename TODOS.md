@@ -110,7 +110,7 @@ Both of you need to do this before splitting off. It takes about an hour.
   ```
   Ask an AI to implement the `transition` function. The full state diagram is in `DESIGN-DOC.md` → "ASCII Diagrams → LESSON FLOW".
 
-- [ ] ** Build the question display component** — Create `src/components/QuestionDisplay.tsx`. It receives an `Exercise` object and renders the right UI for it. For `translate`: show the prompt and a text input. For `fill`: show the sentence with a blank and a row of word buttons. For `match`: show two columns of words to pair up. See `DESIGN.md` for how the answer option cards should look.
+- [X] ** Build the question display component** — Create `src/components/QuestionDisplay.tsx`. It receives an `Exercise` object and renders the right UI for it. For `translate`: show the prompt and a text input. For `fill`: show the sentence with a blank and a row of word buttons. For `match`: show two columns of words to pair up. See `DESIGN.md` for how the answer option cards should look.
 
 - [ ] ** Build the feedback drawer** — Create `src/components/FeedbackDrawer.tsx`. This is the panel that slides up from the bottom after each answer. Green background + checkmark if correct. Red background + correct answer shown if wrong. Full-width "Continue" button. See `DESIGN.md` → "Feedback Drawer" for the exact colors and styling.
 
