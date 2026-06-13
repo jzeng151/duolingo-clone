@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { checkAnswer, solutionText, type Exercise } from '../content/types';
 import QuestionDisplay from './QuestionDisplay';
@@ -32,7 +32,11 @@ export default function LessonRunner({
   exercises: Exercise[];
   onComplete: (payload: { xpEarned: number }) => Promise<OnCompleteResult>;
 }) {
-  const [state, setState] = useState<LessonState>(initialLessonState);
+  // Start the lesson immediately: run the machine's START transition once so
+  // 'idle' is never rendered (avoids a setState-in-effect on mount).
+  const [state, setState] = useState<LessonState>(
+    () => transition(initialLessonState, { type: 'START' }).nextState,
+  );
   const [index, setIndex] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [streakDays, setStreakDays] = useState<number | null>(null);
@@ -40,13 +44,6 @@ export default function LessonRunner({
   const [mistakes, setMistakes] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
   const submissionLockedRef = useRef(false);
-
-  // Start the lesson on mount
-  useEffect(() => {
-    const r = transition(state, { type: 'START' });
-    setState(r.nextState);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const currentExercise = exercises.length > 0 ? exercises[index] : null;
   const progress = exercises.length > 0 ? Math.round((index / exercises.length) * 100) : 0;
