@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { checkAnswer, solutionText, type Exercise } from '../content/types';
 import QuestionDisplay from './QuestionDisplay';
+import FeedbackMascot from './FeedbackMascot';
 import FeedbackDrawer from './FeedbackDrawer';
 import CompletionScreen from './CompletionScreen';
 import { playCorrect, playWrong } from '../lib/sounds';
@@ -141,6 +142,8 @@ export default function LessonRunner({
           ) : (
             <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 text-center">No exercises available.</div>
           )}
+
+          {inFeedback && <FeedbackMascot key={index} isCorrect={state === 'feedback_correct'} />}
         </div>
       </main>
 
