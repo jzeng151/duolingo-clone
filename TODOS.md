@@ -153,9 +153,9 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 7: Wire everything together and build the home page
 
-- [ ] ** Wire the lesson page** — Create `src/app/lesson/page.tsx`. Import `<LessonRunner>` and the Spanish exercises. Pass `onComplete` as a prop that calls Bath's `completeLesson` server action. This is the page that makes everything connect.
+- [x] ** Wire the lesson page** — Create `src/app/lesson/page.tsx`. Import `<LessonRunner>` and the Spanish exercises. Pass `onComplete` as a prop that calls Bath's `completeLesson` server action. This is the page that makes everything connect.
 
-- [ ] ** Build the home page** — Update `src/app/page.tsx` to show the logged-in user's streak count, total XP, and a "Start Lesson" button. Fetch the data from Supabase using the user's session.
+- [x] ** Build the home page** — Update `src/app/page.tsx` to show the logged-in user's streak count, total XP, and a "Start Lesson" button. Fetch the data from Supabase using the user's session.
 
 ---
 

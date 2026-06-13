@@ -15,7 +15,7 @@ export default function SignupPage() {
   useEffect(() => {
     supabaseBrowser.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace("/lesson");
+        router.replace("/learn");
       }
     });
   }, [router]);
@@ -36,7 +36,7 @@ export default function SignupPage() {
         return;
       }
 
-      router.push("/lesson");
+      router.push("/learn");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unexpected error occurred.");
     } finally {
