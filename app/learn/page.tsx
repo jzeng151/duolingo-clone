@@ -72,7 +72,7 @@ export default async function LearnPage() {
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Complete a short lesson with translation, fill-in-the-blank, and matching exercises.
+            Complete a short lesson with picture, multiple-choice, word-bank, and matching exercises.
           </p>
 
           <Link

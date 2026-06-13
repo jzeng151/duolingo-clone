@@ -18,7 +18,7 @@ export default function LessonPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl p-8">
+    <main className="flex flex-1 flex-col bg-white">
       <LessonRunner
         exercises={spanishLesson1}
         onComplete={handleComplete}

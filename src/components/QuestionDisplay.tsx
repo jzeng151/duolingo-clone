@@ -1,230 +1,286 @@
-"use client";
+'use client';
 
-export type Exercise =
-  | { type: 'translate'; prompt: string; answer: string; hint?: string }
-  | { type: 'match'; pairs: Array<{ left: string; right: string }> }
-  | { type: 'fill'; template: string; answer: string; options: string[] };
+import { useEffect, useState } from 'react';
+import { CHARACTERS, type CharacterId, type Exercise } from '../content/types';
 
-import { useState } from 'react';
+export type { Exercise } from '../content/types';
+
+/* Character illustration + speech bubble. Uses the repo's existing mascot art. */
+function Mascot({ character, line }: { character: CharacterId; line: string }) {
+  const { src, name } = CHARACTERS[character];
+  return (
+    <div className="flex items-end gap-3">
+      <img src={src} alt={name} className="mascot-bob h-28 w-28 shrink-0 object-contain" />
+      <div className="relative mb-4 rounded-2xl border-2 border-[#E5E5E5] bg-white px-4 py-3">
+        <span
+          className="absolute -left-2 bottom-3 h-3 w-3 rotate-45 border-b-2 border-l-2 border-[#E5E5E5] bg-white"
+          aria-hidden="true"
+        />
+        <p className="text-lg font-bold text-[#4B4B4B]">{line}</p>
+      </div>
+    </div>
+  );
+}
+
+/* The selectable card shape shared by image and translation answers. */
+function OptionCard({
+  selected,
+  onClick,
+  index,
+  children,
+  className = '',
+}: {
+  selected: boolean;
+  onClick: () => void;
+  index: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`group relative rounded-2xl border-2 border-b-4 p-3 text-left transition-colors ${
+        selected
+          ? 'border-[#1CB0F6] bg-[#DDF4FF]'
+          : 'border-[#E5E5E5] bg-white hover:bg-[#F7F7F7]'
+      } ${className}`}
+    >
+      <span
+        className={`absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-lg border-2 text-xs font-bold ${
+          selected ? 'border-[#1CB0F6] text-[#1899D6]' : 'border-[#E5E5E5] text-[#AFAFAF]'
+        }`}
+      >
+        {index + 1}
+      </span>
+      {children}
+    </button>
+  );
+}
 
 export default function QuestionDisplay({
   exercise,
-  onSubmit,
+  onAnswerChange,
 }: {
   exercise: Exercise;
-  onSubmit: (result: { answer: string; isCorrect: boolean }) => void;
+  onAnswerChange: (answer: string | null) => void;
 }) {
-  // translate input
-  const [text, setText] = useState('');
+  // select_image / select_translation
+  const [selected, setSelected] = useState<string | null>(null);
 
-  // fill selection
-  const [selectedFill, setSelectedFill] = useState<string | null>(null);
+  // word_bank
+  const [placed, setPlaced] = useState<string[]>([]);
 
-  // match selections
-  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
-  const [selectedRight, setSelectedRight] = useState<string | null>(null);
-  const [matchedPairs, setMatchedPairs] = useState<Array<{ left: string; right: string }>>([]);
+  // match
+  const [pickedLeft, setPickedLeft] = useState<string | null>(null);
+  const [pickedRight, setPickedRight] = useState<string | null>(null);
+  const [matched, setMatched] = useState<Array<{ left: string; right: string }>>([]);
+  const [wrongPair, setWrongPair] = useState<{ left: string; right: string } | null>(null);
 
-  function resetMatchSelection() {
-    setSelectedLeft(null);
-    setSelectedRight(null);
+  // Derive the answer string the footer will grade, or null when not yet checkable.
+  let answer: string | null = null;
+  if (exercise.type === 'select_image' || exercise.type === 'select_translation') {
+    answer = selected;
+  } else if (exercise.type === 'word_bank') {
+    answer = placed.length > 0 ? placed.join(' ') : null;
+  } else if (exercise.type === 'match') {
+    answer = matched.length === exercise.pairs.length ? JSON.stringify(matched) : null;
   }
 
-  function handleLeftSelect(left: string) {
-    if (matchedPairs.some((p) => p.left === left)) {
-      return;
-    }
+  useEffect(() => {
+    onAnswerChange(answer);
+    // onAnswerChange is recreated each render by the parent; depending on `answer` is enough.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answer]);
 
-    if (selectedRight && !matchedPairs.some((p) => p.right === selectedRight)) {
-      setMatchedPairs((m) => [...m, { left, right: selectedRight }]);
-      resetMatchSelection();
-      return;
-    }
-
-    setSelectedLeft(left);
-  }
-
-  function handleRightSelect(right: string) {
-    if (matchedPairs.some((p) => p.right === right)) {
-      return;
-    }
-
-    if (selectedLeft && !matchedPairs.some((p) => p.left === selectedLeft)) {
-      setMatchedPairs((m) => [...m, { left: selectedLeft, right }]);
-      resetMatchSelection();
-      return;
-    }
-
-    setSelectedRight(right);
-  }
-
-  // call when user clicks Check
-  function handleCheck() {
-    if (exercise.type === 'translate') {
-      const entered = text.trim();
-      const isCorrect = entered.toLowerCase() === exercise.answer.trim().toLowerCase();
-      onSubmit({ answer: entered, isCorrect });
-      return;
-    }
-
-    if (exercise.type === 'fill') {
-      const selected = selectedFill ?? '';
-      const isCorrect = selected.trim().toLowerCase() === exercise.answer.trim().toLowerCase();
-      onSubmit({ answer: selected, isCorrect });
-      return;
-    }
-
-    if (exercise.type === 'match') {
-      // ensure all pairs matched
-      const answerPairs = matchedPairs.slice();
-      const serialized = JSON.stringify(answerPairs);
-      // evaluate correctness: compare sets of left|right
-      const expected = new Set(exercise.pairs.map((p) => `${p.left}|||${p.right}`));
-      const actual = new Set(answerPairs.map((p) => `${p.left}|||${p.right}`));
-      const isCorrect = expected.size === actual.size && [...expected].every((v) => actual.has(v));
-      onSubmit({ answer: serialized, isCorrect });
-      return;
+  function toggleBankWord(word: string, fromBank: boolean) {
+    if (fromBank) {
+      setPlaced((p) => [...p, word]);
+    } else {
+      // remove the first matching placed instance
+      setPlaced((p) => {
+        const i = p.indexOf(word);
+        if (i === -1) return p;
+        return [...p.slice(0, i), ...p.slice(i + 1)];
+      });
     }
   }
 
-  // Derived validity
-  const canCheck =
-    (exercise.type === 'translate' && text.trim().length > 0) ||
-    (exercise.type === 'fill' && selectedFill !== null) ||
-    (exercise.type === 'match' && matchedPairs.length === exercise.pairs.length);
+  function attemptMatch(left: string | null, right: string | null) {
+    if (!left || !right) return;
+    if (exercise.type !== 'match') return;
+    const isPair = exercise.pairs.some((p) => p.left === left && p.right === right);
+    if (isPair) {
+      setMatched((m) => [...m, { left, right }]);
+    } else {
+      setWrongPair({ left, right });
+      setTimeout(() => setWrongPair(null), 600);
+    }
+    setPickedLeft(null);
+    setPickedRight(null);
+  }
 
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      {exercise.type === 'translate' && (
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Translate</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-900">{exercise.prompt}</h2>
+    <div className="space-y-6">
+      {exercise.type === 'select_image' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">Which one of these is {exercise.prompt}?</h2>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {exercise.options.map((opt, i) => (
+              <OptionCard
+                key={opt.word}
+                index={i}
+                selected={selected === opt.word}
+                onClick={() => setSelected(opt.word)}
+                className="flex flex-col items-center gap-3 pt-8"
+              >
+                <span className="text-6xl leading-none">{opt.emoji}</span>
+                <span className="text-base font-bold text-[#4B4B4B]">{opt.word}</span>
+              </OptionCard>
+            ))}
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700">Your answer</label>
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Write your answer here"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-            />
-            {exercise.hint ? <p className="text-sm text-slate-500">Hint: {exercise.hint}</p> : null}
-          </div>
-        </div>
+        </>
       )}
 
-      {exercise.type === 'fill' && (
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Fill in the blank</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
-              {exercise.template.split('___').map((segment, index, array) => (
-                <span key={index}>
-                  {segment}
-                  {index < array.length - 1 ? (
-                    <span className="inline-block min-w-[4rem] border-b-2 border-slate-300 text-lg font-semibold text-slate-900">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                  ) : null}
-                </span>
-              ))}
-            </p>
+      {exercise.type === 'select_translation' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">Select the correct translation</h2>
+          <Mascot character={exercise.character ?? 'duo'} line={exercise.prompt} />
+          <div className="space-y-3">
+            {exercise.options.map((opt, i) => (
+              <OptionCard
+                key={opt}
+                index={i}
+                selected={selected === opt}
+                onClick={() => setSelected(opt)}
+                className="flex items-center pl-12"
+              >
+                <span className="text-lg font-bold text-[#4B4B4B]">{opt}</span>
+              </OptionCard>
+            ))}
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-700">Choose the correct word</p>
-            <div className="grid grid-cols-2 gap-3">
-              {exercise.options.map((option) => {
-                const selected = selectedFill === option;
+        </>
+      )}
+
+      {exercise.type === 'word_bank' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">
+            {exercise.instruction ?? 'Write this in Spanish'}
+          </h2>
+          <Mascot character={exercise.character ?? 'duo'} line={exercise.prompt} />
+
+          {/* Answer line(s) */}
+          <div className="flex min-h-[60px] flex-wrap content-start items-start gap-2 border-b-2 border-[#E5E5E5] pb-3">
+            {placed.map((word, i) => (
+              <button
+                key={`${word}-${i}`}
+                type="button"
+                onClick={() => toggleBankWord(word, false)}
+                className="rounded-xl border-2 border-b-4 border-[#E5E5E5] bg-white px-4 py-2 text-base font-bold text-[#4B4B4B]"
+              >
+                {word}
+              </button>
+            ))}
+          </div>
+
+          {/* Word bank */}
+          <div className="flex flex-wrap gap-2">
+            {exercise.bank.map((word, i) => {
+              const usedCount = placed.filter((w) => w === word).length;
+              const bankCount = exercise.bank.filter((w) => w === word).length;
+              const exhausted = usedCount >= bankCount;
+              return (
+                <button
+                  key={`${word}-${i}`}
+                  type="button"
+                  disabled={exhausted}
+                  onClick={() => toggleBankWord(word, true)}
+                  className={`rounded-xl border-2 border-b-4 px-4 py-2 text-base font-bold transition-colors ${
+                    exhausted
+                      ? 'border-[#E5E5E5] bg-[#E5E5E5] text-[#E5E5E5]'
+                      : 'border-[#E5E5E5] bg-white text-[#4B4B4B] hover:bg-[#F7F7F7]'
+                  }`}
+                >
+                  {word}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {exercise.type === 'match' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">Tap the pairs</h2>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-3">
+              {exercise.pairs.map((pair, i) => {
+                const isMatched = matched.some((m) => m.left === pair.left);
+                const isPicked = pickedLeft === pair.left;
+                const isWrong = wrongPair?.left === pair.left;
                 return (
                   <button
-                    key={option}
+                    key={pair.left}
                     type="button"
-                    onClick={() => setSelectedFill(option)}
-                    className={`rounded-2xl border p-3 text-left text-sm font-medium transition ${
-                      selected ? 'bg-[#F0F8FF] border-[#1CB0F6]' : 'bg-slate-50 border-slate-300 hover:bg-slate-100'
+                    disabled={isMatched}
+                    onClick={() => {
+                      setPickedLeft(pair.left);
+                      attemptMatch(pair.left, pickedRight);
+                    }}
+                    className={`flex w-full items-center gap-3 rounded-2xl border-2 border-b-4 px-4 py-3 text-left text-lg font-bold transition-colors ${
+                      isMatched
+                        ? 'border-[#E5E5E5] bg-[#F7F7F7] text-transparent'
+                        : isWrong
+                        ? 'border-[#FF4B4B] bg-[#FFDFE0] text-[#EA2B2B]'
+                        : isPicked
+                        ? 'border-[#1CB0F6] bg-[#DDF4FF] text-[#1899D6]'
+                        : 'border-[#E5E5E5] bg-white text-[#4B4B4B] hover:bg-[#F7F7F7]'
                     }`}
                   >
-                    {option}
+                    <span className="flex h-6 w-6 items-center justify-center rounded-lg border-2 border-current text-xs">
+                      {i + 1}
+                    </span>
+                    {pair.left}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="space-y-3">
+              {exercise.pairs.map((pair, i) => {
+                const isMatched = matched.some((m) => m.right === pair.right);
+                const isPicked = pickedRight === pair.right;
+                const isWrong = wrongPair?.right === pair.right;
+                return (
+                  <button
+                    key={pair.right}
+                    type="button"
+                    disabled={isMatched}
+                    onClick={() => {
+                      setPickedRight(pair.right);
+                      attemptMatch(pickedLeft, pair.right);
+                    }}
+                    className={`flex w-full items-center gap-3 rounded-2xl border-2 border-b-4 px-4 py-3 text-left text-lg font-bold transition-colors ${
+                      isMatched
+                        ? 'border-[#E5E5E5] bg-[#F7F7F7] text-transparent'
+                        : isWrong
+                        ? 'border-[#FF4B4B] bg-[#FFDFE0] text-[#EA2B2B]'
+                        : isPicked
+                        ? 'border-[#1CB0F6] bg-[#DDF4FF] text-[#1899D6]'
+                        : 'border-[#E5E5E5] bg-white text-[#4B4B4B] hover:bg-[#F7F7F7]'
+                    }`}
+                  >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-lg border-2 border-current text-xs">
+                      {i + 5}
+                    </span>
+                    {pair.right}
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
+        </>
       )}
-
-      {exercise.type === 'match' && (
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Match</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-900">Pair the words</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-2 text-sm font-medium text-slate-700">Left column</p>
-              {exercise.pairs.map((pair) => {
-                const isSelected = selectedLeft === pair.left;
-                const isMatched = matchedPairs.some((p) => p.left === pair.left);
-                return (
-                <button
-                  key={pair.left}
-                  type="button"
-                  onClick={() => handleLeftSelect(pair.left)}
-                  className={`w-full text-left rounded-2xl px-4 py-3 ${
-                    isMatched ? 'bg-white opacity-60' : isSelected ? 'bg-[#F0F8FF] border border-[#1CB0F6]' : 'bg-white'
-                  }`}
-                >
-                  {pair.left}
-                </button>
-              );
-              })}
-            </div>
-            <div className="space-y-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-2 text-sm font-medium text-slate-700">Right column</p>
-              {exercise.pairs.map((pair) => {
-                const isSelected = selectedRight === pair.right;
-                const isMatched = matchedPairs.some((p) => p.right === pair.right);
-                return (
-                <button
-                  key={pair.right}
-                  type="button"
-                  onClick={() => handleRightSelect(pair.right)}
-                  className={`w-full text-left rounded-2xl px-4 py-3 ${
-                    isMatched ? 'bg-white opacity-60' : isSelected ? 'bg-[#F0F8FF] border border-[#1CB0F6]' : 'bg-white'
-                  }`}
-                >
-                  {pair.right}
-                </button>
-              );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-2">
-            <p className="text-sm text-slate-600">Matched pairs:</p>
-            <div className="mt-2 space-y-2">
-              {matchedPairs.map((p, i) => (
-                <div key={i} className="rounded-xl bg-white p-3 text-sm">
-                  {p.left} — {p.right}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="mt-4">
-        <button
-          type="button"
-          onClick={handleCheck}
-          disabled={!canCheck}
-          className={`w-full rounded-xl px-6 py-3 text-lg font-bold text-white uppercase tracking-wide ${
-            canCheck ? 'bg-[#58CC02] border-b-4 border-[#46A302] hover:bg-[#46A302]' : 'bg-[#E5E5E5] border-[#E5E5E5] text-[#AFAFAF] cursor-not-allowed'
-          }`}
-        >
-          Check
-        </button>
-      </div>
-    </section>
+    </div>
   );
 }
