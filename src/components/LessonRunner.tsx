@@ -134,8 +134,9 @@ export default function LessonRunner({
         <Hearts count={hearts} />
       </header>
 
-      {/* Question */}
-      <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+      {/* Question. Reserve bottom space during feedback so the mascot can clear
+          the fixed FeedbackDrawer (taller on mobile) instead of hiding behind it. */}
+      <main className={`flex-1 overflow-y-auto px-4 py-6 sm:px-6 ${inFeedback ? 'pb-56' : ''}`}>
         <div className="mx-auto max-w-2xl">
           {currentExercise ? (
             <QuestionDisplay key={index} exercise={currentExercise} onAnswerChange={setCurrentAnswer} />
