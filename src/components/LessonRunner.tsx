@@ -143,7 +143,7 @@ export default function LessonRunner({
             <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 text-center">No exercises available.</div>
           )}
 
-          {inFeedback && <FeedbackMascot key={index} isCorrect={state === 'feedback_correct'} />}
+          {inFeedback && <FeedbackMascot key={`fb-${index}`} isCorrect={state === 'feedback_correct'} />}
         </div>
       </main>
 
