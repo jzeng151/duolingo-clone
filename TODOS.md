@@ -87,7 +87,7 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 4: Define the exercise format
 
-- [ ] ** Create the exercise types file** — Create `src/content/types.ts` with this exact content:
+- [x] ** Create the exercise types file** — Create `src/content/types.ts` with this exact content:
   ```typescript
   export type Exercise =
     | { type: 'translate'; prompt: string; answer: string; hint?: string }
@@ -99,7 +99,7 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 ### Step 5: Build the lesson screen
 
-- [ ] ** Build the lesson state machine** — Create `src/lib/lesson-state-machine.ts`. This is the logic engine for the lesson — it tracks what's happening at every moment. Use this exact structure:
+- [x] ** Build the lesson state machine** — Create `src/lib/lesson-state-machine.ts`. This is the logic engine for the lesson — it tracks what's happening at every moment. Use this exact structure:
   ```typescript
   type LessonState = 'idle' | 'showing_question' | 'feedback_correct' | 'feedback_wrong' | 'done' | 'persisting' | 'complete' | 'error'
   type LessonAction = { type: 'START' } | { type: 'SUBMIT'; answer: string } | { type: 'NEXT' } | { type: 'SAVE_SUCCESS'; xpEarned: number; newStreak: number } | { type: 'SAVE_ERROR' } | { type: 'RETRY' }
@@ -110,16 +110,16 @@ Both of you need to do this before splitting off. It takes about an hour.
   ```
   Ask an AI to implement the `transition` function. The full state diagram is in `DESIGN-DOC.md` → "ASCII Diagrams → LESSON FLOW".
 
-- [ ] ** Build the question display component** — Create `src/components/QuestionDisplay.tsx`. It receives an `Exercise` object and renders the right UI for it. For `translate`: show the prompt and a text input. For `fill`: show the sentence with a blank and a row of word buttons. For `match`: show two columns of words to pair up. See `DESIGN.md` for how the answer option cards should look.
+- [X] ** Build the question display component** — Create `src/components/QuestionDisplay.tsx`. It receives an `Exercise` object and renders the right UI for it. For `translate`: show the prompt and a text input. For `fill`: show the sentence with a blank and a row of word buttons. For `match`: show two columns of words to pair up. See `DESIGN.md` for how the answer option cards should look.
 
-- [ ] ** Build the feedback drawer** — Create `src/components/FeedbackDrawer.tsx`. This is the panel that slides up from the bottom after each answer. Green background + checkmark if correct. Red background + correct answer shown if wrong. Full-width "Continue" button. See `DESIGN.md` → "Feedback Drawer" for the exact colors and styling.
+- [X] ** Build the feedback drawer** — Create `src/components/FeedbackDrawer.tsx`. This is the panel that slides up from the bottom after each answer. Green background + checkmark if correct. Red background + correct answer shown if wrong. Full-width "Continue" button. See `DESIGN.md` → "Feedback Drawer" for the exact colors and styling.
 
-- [ ] ** Build the completion screen** — Create `src/components/CompletionScreen.tsx`. Shows after the last question. Displays XP earned and current streak. Has two states:
+- [x] ** Build the completion screen** — Create `src/components/CompletionScreen.tsx`. Shows after the last question. Displays XP earned and current streak. Has two states:
   - **Loading:** show a spinner while the save is in progress
   - **Success:** show "🔥 X day streak!" and "⚡ +X XP" with a celebration feel
   - **Error:** show "Progress couldn't be saved. Check your connection." with a "Try again" button
 
-- [ ] ** Wire the lesson runner together** — Create `src/components/LessonRunner.tsx`. This component:
+- [x] ** Wire the lesson runner together** — Create `src/components/LessonRunner.tsx`. This component:
   1. Holds the state machine state using React's `useState`
   2. Shows the progress bar at the top
   3. Renders `<QuestionDisplay>` for the current exercise
