@@ -124,6 +124,22 @@ body {
   animation: feedback-slide-up 0.25s ease-out;
 }
 
+/* Feedback mascot: scales up into view, then a subtle pop overshoot. */
+@keyframes mascot-feedback-pop {
+  0%   { transform: scale(0);    opacity: 0; }
+  55%  { transform: scale(1);    opacity: 1; }
+  72%  { transform: scale(1.09); }
+  86%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+.mascot-feedback-pop {
+  animation: mascot-feedback-pop 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  transform-origin: center bottom;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-feedback-pop { animation: none; }
+}
+
 /* ── Duo mascot SVG styling ── */
 .duo-mascot {
   filter: drop-shadow(0 8px 24px rgba(88, 204, 2, 0.25));

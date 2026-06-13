@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { checkAnswer, solutionText, type Exercise } from '../content/types';
 import QuestionDisplay from './QuestionDisplay';
+import FeedbackMascot from './FeedbackMascot';
 import FeedbackDrawer from './FeedbackDrawer';
 import CompletionScreen from './CompletionScreen';
 import { playCorrect, playWrong } from '../lib/sounds';
@@ -133,14 +134,17 @@ export default function LessonRunner({
         <Hearts count={hearts} />
       </header>
 
-      {/* Question */}
-      <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+      {/* Question. Reserve bottom space during feedback so the mascot can clear
+          the fixed FeedbackDrawer (taller on mobile) instead of hiding behind it. */}
+      <main className={`flex-1 overflow-y-auto px-4 py-6 sm:px-6 ${inFeedback ? 'pb-56' : ''}`}>
         <div className="mx-auto max-w-2xl">
           {currentExercise ? (
             <QuestionDisplay key={index} exercise={currentExercise} onAnswerChange={setCurrentAnswer} />
           ) : (
             <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 text-center">No exercises available.</div>
           )}
+
+          {inFeedback && <FeedbackMascot key={`fb-${index}`} isCorrect={state === 'feedback_correct'} />}
         </div>
       </main>
 
