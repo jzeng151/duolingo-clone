@@ -318,7 +318,7 @@ export default function Home() {
           </Link>
           {scrolled ? (
             <Link
-              href="/register"
+              href="/signup"
               className="flex items-center justify-center border-b-4 border-feather-green-dark bg-feather-green text-white"
               style={{ height: "42px", borderRadius: "12px", fontSize: "14px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", padding: "0 20px" }}
             >
@@ -385,18 +385,19 @@ export default function Home() {
               style={{ width: "330px", gap: "12px", marginTop: "40px" }}
             >
               <Link
-                href="/register"
+                href="/signup"
                 className="flex items-center justify-center border-b-4 border-feather-green-dark bg-feather-green text-white"
                 style={{ width: "330px", height: "50px", borderRadius: "12px", fontSize: "15px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px" }}
               >
                 Get started
               </Link>
-              <button
+              <Link
+                href="/login"
                 className="flex items-center justify-center border-b-4 border-swan bg-white text-macaw transition-colors hover:bg-polar"
                 style={{ width: "330px", height: "50px", borderRadius: "12px", fontSize: "15px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px" }}
               >
                 I already have an account
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -648,7 +649,7 @@ export default function Home() {
               learn a language with duolingo
             </h2>
             <Link
-              href="/register"
+              href="/signup"
               className="flex items-center justify-center border-b-4 border-eel bg-white text-feather-green"
               style={{ height: "50px", borderRadius: "12px", fontSize: "15px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", padding: "0 24px", marginTop: "40px" }}
             >
