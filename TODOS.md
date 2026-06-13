@@ -137,7 +137,7 @@ Both of you need to do this before splitting off. It takes about an hour.
   
   The full code pattern is in `DESIGN-DOC.md` → "Resolved Architecture Decisions → D6".
 
-- [ ] ** Create the Spanish exercise content** — Create `src/content/spanish-lesson-1.ts` with 5–8 exercises using the `Exercise` type from `src/content/types.ts`. Include at least one of each type (translate, match, fill). Example:
+- [x] ** Create the Spanish exercise content** — Create `src/content/spanish-lesson-1.ts` with 5–8 exercises using the `Exercise` type from `src/content/types.ts`. Include at least one of each type (translate, match, fill). Example:
   ```typescript
   import type { Exercise } from './types'
   
