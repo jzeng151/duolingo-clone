@@ -1,440 +1,344 @@
-# Design System
-
-This document defines the visual language for the Duolingo clone. Follow these specs exactly — consistency is what makes the app feel like Duolingo.
-
 ---
+version: alpha
+name: Duolingo Clone
+description: >-
+  Playful, approachable, and bold. Duolingo's visual identity centers on a
+  cheerful green owl mascot, rounded friendly type, and generous white space.
+  The tone is irreverent and fun while remaining clear and trustworthy.
+colors:
+  # ── Canonical alias (required by tooling) ──
+  primary: "#58CC02"
+  # ── Core brand colors (from Duo's body) ──
+  feather-green: "#58CC02"
+  mask-green: "#89E219"
+  eel: "#4B4B4B"
+  snow: "#FFFFFF"
+  # ── Secondary colors (UI accents & illustrations) ──
+  macaw: "#1CB0F6"
+  cardinal: "#FF4B4B"
+  bee: "#FFC800"
+  fox: "#FF9600"
+  beetle: "#CE82FF"
+  humpback: "#2B70C9"
+  # ── Neutrals (hierarchy & utility) ──
+  wolf: "#777777"
+  hare: "#AFAFAF"
+  swan: "#E5E5E5"
+  polar: "#F7F7F7"
+  # ── Duo-specific palette ──
+  wing-overlay: "#43C000"
+  beak-inner: "#B66E28"
+  beak-lower: "#F49000"
+  beak-upper: "#FFC200"
+  beak-highlight: "#FFDE00"
+  tongue-pink: "#FFCAFF"
+  # ── Functional / surface ──
+  bg-page: "#FFFFFF"
+  bg-herogreen: "#D7FFDB"
+  text-primary: "#4B4B4B"
+  text-secondary: "#777777"
+  link-default: "#1CB0F6"
+  border-light: "#E5E5E5"
+typography:
+  h1:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "3rem"
+    fontWeight: 800
+    lineHeight: 1.1
+    letterSpacing: "-0.02em"
+  h2:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "2rem"
+    fontWeight: 800
+    lineHeight: 1.1
+    letterSpacing: "-0.02em"
+  h3:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.01em"
+  body-lg:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0em"
+  body-md:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0em"
+  body-sm:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "0em"
+  label:
+    fontFamily: "'Nunito', sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1.5
+    letterSpacing: "0.08em"
+rounded:
+  sm: "4px"
+  md: "12px"
+  lg: "16px"
+  xl: "24px"
+  full: "9999px"
+spacing:
+  xs: "4px"
+  sm: "8px"
+  md: "16px"
+  lg: "24px"
+  xl: "32px"
+  2xl: "48px"
+  3xl: "64px"
+  4xl: "96px"
+components:
+  button-primary:
+    backgroundColor: "{colors.feather-green}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.full}"
+    padding: "16px 24px"
+    typography: "{typography.body-md}"
+  button-primary-hover:
+    backgroundColor: "#47B300"
+    textColor: "#FFFFFF"
+  button-secondary:
+    backgroundColor: "transparent"
+    textColor: "{colors.eel}"
+    rounded: "{rounded.full}"
+    padding: "16px 24px"
+    typography: "{typography.body-sm}"
+  nav-bar:
+    backgroundColor: "{colors.snow}"
+    textColor: "{colors.eel}"
+    height: "64px"
+    padding: "0 24px"
+  section-feature:
+    backgroundColor: "{colors.snow}"
+    padding: "96px 24px"
+  footer:
+    backgroundColor: "{colors.eel}"
+    textColor: "{colors.snow}"
+    padding: "64px 24px"
+---
+
+## Overview
+
+Duolingo's visual identity is built around three pillars: **playful**, **approachable**, and **bold**. The mascot Duo (a round green owl) is the emotional anchor. The design system uses rounded shapes, a custom bold typeface (Feather Bold), generous white space, and a vibrant green-driven palette to create a feeling that language learning is fun — not intimidating.
+
+Every page should feel like it's smiling at you.
+
+**Source:** [Duolingo Brand Guidelines](https://design.duolingo.com)
 
 ## Colors
 
-### Primary Palette
+### Core brand colors
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| **Duo Green** | `#58CC02` | Primary buttons, active states, correct answer highlight, streak icon |
-| **Duo Green Dark** | `#46A302` | Button hover/pressed state for green buttons |
-| **Duo Green Light** | `#D7FFB8` | Correct answer feedback background |
-| **Duo Blue** | `#1CB0F6` | Links, secondary actions, info highlights |
-| **Duo Blue Dark** | `#0D94D0` | Blue button hover/pressed |
-| **Duo Orange** | `#FF9600` | XP counter, flame/streak icon, warning states |
-| **Duo Red** | `#FF4B4B` | Wrong answer feedback, error states, hearts |
-| **Duo Red Light** | `#FFD2D2` | Wrong answer feedback background |
+These four colors are taken directly from Duo's body and form the backbone of every Duolingo surface:
 
-### Neutral Palette
+- **Feather Green (#58CC02):** The single most recognizable color. Used for primary CTAs, active states, key highlights, and Duo's body. "When in doubt, lean into green!"
+- **Mask Green (#89E219):** Secondary green. Used for Duo's mask area and supporting green surfaces.
+- **Eel (#4B4B4B):** The primary text color. Warm dark gray, not pure black. Used for headings and body text.
+- **Snow (#FFFFFF):** Primary background color. The default canvas.
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| **White** | `#FFFFFF` | Page background, card backgrounds |
-| **Gray 50** | `#F7F7F7` | Subtle section backgrounds |
-| **Gray 100** | `#E5E5E5` | Borders, dividers, disabled button backgrounds |
-| **Gray 300** | `#AFAFAF` | Placeholder text, disabled text |
-| **Gray 600** | `#777777` | Secondary text, labels |
-| **Gray 900** | `#3C3C3C` | Body text, primary text |
-| **Black** | `#1F1F1F` | Headings, high-contrast text |
+### Secondary colors
 
-### Tailwind Config — add custom colors
+Vibrant accents for UI elements, illustrations, and delightful splashes:
 
-To use names like `bg-duo-green` instead of `bg-[#58CC02]` everywhere, add this to `tailwind.config.ts` under `theme.extend.colors`:
+- **Macaw (#1CB0F6):** Blue — links, info states, water/ice themed content
+- **Cardinal (#FF4B4B):** Red — errors, warnings, hearts/lives
+- **Bee (#FFC800):** Yellow — gold/streaks, achievements, star ratings
+- **Fox (#FF9600):** Orange — XP, energy, secondary CTAs, Duo's beak
+- **Beetle (#CE82FF):** Purple — premium (Super Duolingo), magic/special content
+- **Humpback (#2B70C9):** Dark blue — deep links, trust elements
 
-```js
-colors: {
-  'duo-green':       '#58CC02',
-  'duo-green-dark':  '#46A302',
-  'duo-green-light': '#D7FFB8',
-  'duo-blue':        '#1CB0F6',
-  'duo-blue-dark':   '#0D94D0',
-  'duo-orange':      '#FF9600',
-  'duo-red':         '#FF4B4B',
-  'duo-red-light':   '#FFD2D2',
-  'gray-border':     '#E5E5E5',
-  'gray-text':       '#3C3C3C',
-  'gray-muted':      '#AFAFAF',
-},
-```
+### Neutrals
 
-After adding this, you can write `bg-duo-green` instead of `bg-[#58CC02]` anywhere in the project.
+Provide hierarchy without competing with core and secondary colors:
 
-### Semantic Colors
+- **Eel (#4B4B4B):** Primary text
+- **Wolf (#777777):** Secondary text, labels
+- **Hare (#AFAFAF):** Disabled states, placeholders
+- **Swan (#E5E5E5):** Borders, dividers
+- **Polar (#F7F7F7):** Subtle backgrounds, cards
+- **Snow (#FFFFFF):** Page background
 
-| State | Background | Border | Text |
-|-------|-----------|--------|------|
-| Correct | `#D7FFB8` | `#58CC02` | `#3C3C3C` |
-| Wrong | `#FFD2D2` | `#FF4B4B` | `#3C3C3C` |
-| Disabled | `#E5E5E5` | `#E5E5E5` | `#AFAFAF` |
+### Surface colors
 
----
+- **bg-page (#FFFFFF):** Default page background — always white, never gray
+- **bg-herogreen (#D7FFDB):** Soft mint-green used behind the hero section for a subtle green wash
 
 ## Typography
 
-Duolingo uses **DIN Round Pro** for headings and **Nunito** as the body/fallback font. Both are rounded, friendly, and highly legible.
-
-### Font Families
-
-```css
-/* Heading font — DIN Round Pro (load via Adobe Fonts or equivalent) */
-font-family: 'DIN Round Pro', 'Nunito', 'Varela Round', sans-serif;
-
-/* Body font — Nunito (available free on Google Fonts) */
-font-family: 'Nunito', 'Varela Round', sans-serif;
-```
-
-> **Note for Bath:** If DIN Round Pro isn't available, use Nunito for everything. It's free on Google Fonts and very close in feel.
-
-**How to add Nunito to the project** — put this in `src/app/layout.tsx`:
-```tsx
-import { Nunito } from 'next/font/google'
-
-const nunito = Nunito({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
-  variable: '--font-nunito',
-})
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className={nunito.variable}>
-      <body className="font-[var(--font-nunito)]">{children}</body>
-    </html>
-  )
-}
-```
-
-Then add this to `tailwind.config.ts` under `theme.extend`:
-```js
-fontFamily: {
-  sans: ['var(--font-nunito)', 'sans-serif'],
-},
-```
-
-After that, Tailwind's default `font-sans` will use Nunito everywhere automatically.
-
-### Type Scale
-
-| Name | Size | Weight | Usage |
-|------|------|--------|-------|
-| `display` | 32px / 2rem | 800 (ExtraBold) | Completion screen headline ("You're on fire!") |
-| `heading-1` | 24px / 1.5rem | 700 (Bold) | Page titles, section headers |
-| `heading-2` | 20px / 1.25rem | 700 (Bold) | Card titles, exercise prompts |
-| `body-lg` | 18px / 1.125rem | 600 (SemiBold) | Answer options, primary UI text |
-| `body` | 16px / 1rem | 400 (Regular) | Body text, descriptions |
-| `body-sm` | 14px / 0.875rem | 400 (Regular) | Labels, captions, secondary text |
-| `caption` | 12px / 0.75rem | 400 (Regular) | Fine print, tooltips |
-
----
-
-## Buttons
-
-Duolingo buttons have a distinctive 3D "raised" look — a solid bottom border that makes them look like physical buttons.
-
-### Primary Button (Green)
-
-```
-Background:     #58CC02
-Bottom border:  4px solid #46A302   ← this creates the 3D raised effect
-Border radius:  12px
-Text color:     #FFFFFF
-Font:           18px / 700 (Bold)
-Padding:        16px 32px
-Text transform: UPPERCASE
-Letter spacing: 0.05em
-
-Hover:  background shifts to #46A302, bottom border shrinks to 2px (button "presses down")
-Active: same as hover
-Disabled: background #E5E5E5, border #E5E5E5, text #AFAFAF, cursor not-allowed
-```
-
-**Tailwind classes:**
-```jsx
-<button className="
-  w-full rounded-xl
-  bg-[#58CC02] border-b-4 border-[#46A302]
-  px-8 py-4
-  text-white text-lg font-bold uppercase tracking-wide
-  hover:bg-[#46A302] hover:border-b-2 active:border-b-2
-  disabled:bg-[#E5E5E5] disabled:border-[#E5E5E5] disabled:text-[#AFAFAF] disabled:cursor-not-allowed
-  transition-all duration-100
-">
-  CHECK
-</button>
-```
-
-### Secondary Button (White/Outlined)
-
-```
-Background:     #FFFFFF
-Border:         2px solid #E5E5E5
-Bottom border:  4px solid #E5E5E5
-Border radius:  12px
-Text color:     #3C3C3C
-Font:           18px / 700 (Bold)
-Padding:        16px 32px
-Text transform: UPPERCASE
-Letter spacing: 0.05em
-```
-
-**Tailwind classes:**
-```jsx
-<button className="
-  w-full rounded-xl
-  bg-white border-2 border-b-4 border-[#E5E5E5]
-  px-8 py-4
-  text-[#3C3C3C] text-lg font-bold uppercase tracking-wide
-  hover:bg-[#F7F7F7]
-  transition-all duration-100
-">
-  SKIP
-</button>
-```
-
-### Danger Button (Red)
-
-Same structure as Primary but with `#FF4B4B` background and `#CC0000` bottom border. Used for destructive actions and error states.
-
-**Tailwind classes:**
-```jsx
-<button className="
-  w-full rounded-xl
-  bg-[#FF4B4B] border-b-4 border-[#CC0000]
-  px-8 py-4
-  text-white text-lg font-bold uppercase tracking-wide
-  hover:bg-[#CC0000] hover:border-b-2
-  transition-all duration-100
-">
-  TRY AGAIN
-</button>
-```
-
----
-
-## Cards & Surfaces
-
-### Answer Option Card (for translate / multiple choice)
-
-```
-Background:     #FFFFFF
-Border:         2px solid #E5E5E5
-Bottom border:  4px solid #E5E5E5
-Border radius:  12px
-Padding:        16px
-Font:           18px / 600
-
-Selected (before submit):
-  Border:       2px solid #1CB0F6
-  Bottom:       4px solid #1CB0F6
-  Background:   #F0F8FF
-
-Correct (after submit):
-  Border:       2px solid #58CC02
-  Background:   #D7FFB8
-
-Wrong (after submit):
-  Border:       2px solid #FF4B4B
-  Background:   #FFD2D2
-```
-
-**Tailwind classes (use conditional classes based on state):**
-```jsx
-// Default (unselected)
-<button className="w-full rounded-xl bg-white border-2 border-b-4 border-[#E5E5E5] p-4 text-lg font-semibold text-left transition-all duration-100 hover:bg-[#F7F7F7]">
-  el gato
-</button>
-
-// Selected (user clicked but hasn't submitted yet)
-<button className="w-full rounded-xl bg-[#F0F8FF] border-2 border-b-4 border-[#1CB0F6] p-4 text-lg font-semibold text-left">
-  el gato
-</button>
-
-// Correct (after submit)
-<button className="w-full rounded-xl bg-[#D7FFB8] border-2 border-b-4 border-[#58CC02] p-4 text-lg font-semibold text-left" disabled>
-  el gato
-</button>
-
-// Wrong (after submit)
-<button className="w-full rounded-xl bg-[#FFD2D2] border-2 border-b-4 border-[#FF4B4B] p-4 text-lg font-semibold text-left animate-shake" disabled>
-  el perro
-</button>
-```
-
-### Feedback Drawer (bottom sheet)
-
-```
-Background:     #D7FFB8 (correct) or #FFD2D2 (wrong)
-Border top:     3px solid #58CC02 (correct) or #FF4B4B (wrong)
-Padding:        24px
-Position:       fixed, bottom 0, full width
-Min height:     140px
-Border radius:  20px 20px 0 0 (rounded top corners only)
-
-Correct icon:   ✓ checkmark in #58CC02
-Wrong icon:     ✗ in #FF4B4B, followed by "Correct answer:" in gray text
-Continue button: Green primary button, full width
-```
-
-**Tailwind classes:**
-```jsx
-// Correct drawer
-<div className="fixed bottom-0 left-0 right-0 rounded-t-[20px] bg-[#D7FFB8] border-t-4 border-[#58CC02] p-6 min-h-[140px] flex flex-col gap-4">
-  <div className="flex items-center gap-2">
-    <span className="text-[#58CC02] text-2xl font-bold">✓</span>
-    <span className="text-[#3C3C3C] text-lg font-bold">Nice work!</span>
-  </div>
-  {/* Green primary button */}
-</div>
-
-// Wrong drawer
-<div className="fixed bottom-0 left-0 right-0 rounded-t-[20px] bg-[#FFD2D2] border-t-4 border-[#FF4B4B] p-6 min-h-[140px] flex flex-col gap-4">
-  <div className="flex items-center gap-2">
-    <span className="text-[#FF4B4B] text-2xl font-bold">✗</span>
-    <span className="text-[#3C3C3C] text-lg font-bold">Correct answer: <span className="font-normal">el gato</span></span>
-  </div>
-  {/* Red danger button */}
-</div>
-```
-
----
-
-## Progress Bar
-
-```
-Track background:  #E5E5E5
-Fill:              #58CC02
-Height:            16px
-Border radius:     8px (fully rounded ends)
-Transition:        width 400ms ease-in-out
-```
-
-**Tailwind classes:**
-```jsx
-// progress is a number from 0 to 100
-<div className="w-full bg-[#E5E5E5] rounded-lg h-4 overflow-hidden">
-  <div
-    className="h-full bg-[#58CC02] rounded-lg transition-all duration-400 ease-in-out"
-    style={{ width: `${progress}%` }}
-  />
-</div>
-```
-
----
-
-## Icons & Illustrations
-
-- **Streak flame:** Use the emoji 🔥 or an SVG flame icon in `#FF9600`.
-- **XP bolt:** ⚡ or an SVG lightning bolt in `#FF9600`.
-- **Heart:** ❤️ or a heart SVG in `#FF4B4B`.
-- **Duo (the owl):** The Duolingo mascot is trademarked. For this clone, either use a placeholder icon or a green owl SVG you draw yourself. Do not copy Duolingo's exact owl artwork.
-
----
-
-## Spacing
-
-Use a base-4 spacing scale (4, 8, 12, 16, 24, 32, 48, 64px). In Tailwind terms: `p-1 p-2 p-3 p-4 p-6 p-8 p-12 p-16`.
-
----
-
-## Border Radius
-
-| Element | Radius |
-|---------|--------|
-| Buttons | 12px (`rounded-xl`) |
-| Cards / option tiles | 12px (`rounded-xl`) |
-| Feedback drawer | 20px top corners only |
-| Progress bar | 8px (`rounded-lg`) |
-| Input fields | 8px (`rounded-lg`) |
-
----
-
-## Animations & Transitions
-
-Duolingo's feel comes from small, snappy animations. Keep them fast — they should feel instant, not slow.
-
-| Interaction | Animation |
-|-------------|-----------|
-| Answer submitted → feedback shows | Feedback drawer slides up from bottom, `300ms ease-out` |
-| Correct answer | Brief green flash on the selected card, then drawer slides up |
-| Wrong answer | Brief red shake on the selected card (`shake` keyframe, 300ms), then drawer slides up |
-| Progress bar advance | Width transition, `400ms ease-in-out` |
-| Completion screen appears | Fade in + scale up from 0.95, `300ms ease-out` |
-| XP counter | Animate the number counting up over `600ms` |
-
-### Tailwind Config — custom animation for wrong answer shake
-
-```js
-// tailwind.config.js
-theme: {
-  extend: {
-    keyframes: {
-      shake: {
-        '0%, 100%': { transform: 'translateX(0)' },
-        '20%':       { transform: 'translateX(-6px)' },
-        '40%':       { transform: 'translateX(6px)' },
-        '60%':       { transform: 'translateX(-4px)' },
-        '80%':       { transform: 'translateX(4px)' },
-      },
-    },
-    animation: {
-      shake: 'shake 0.3s ease-in-out',
-    },
-  },
-},
-```
-
----
-
-## Layout
-
-### Max Width
-
-Lesson content is centered and capped at `640px` wide on desktop. On mobile it fills the screen edge-to-edge with `16px` horizontal padding.
-
-```css
-.lesson-container {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-```
-
-**Tailwind equivalent:**
-```jsx
-<div className="max-w-2xl mx-auto px-4">
-  {/* all lesson content goes here */}
-</div>
-```
-
-### Lesson Screen Layout (top to bottom)
-
-```
-┌────────────────────────────────────┐
-│  [X close]  [████████░░░░] progress│  ← fixed top bar, 64px tall
-├────────────────────────────────────┤
-│                                    │
-│         Exercise prompt            │  ← ~40% of remaining height
-│         (question text)            │
-│                                    │
-├────────────────────────────────────┤
-│   [ Answer option A ]              │
-│   [ Answer option B ]              │  ← answer options, centered
-│   [ Answer option C ]              │
-│   [ Answer option D ]              │
-│                                    │
-└────────────────────────────────────┘
-         ↑ feedback drawer slides up here when answer submitted
-```
-
----
-
-## Responsive Breakpoints
-
-```
-Mobile first. Design for 375px width as the base.
-sm: 640px   — tablet portrait
-md: 768px   — tablet landscape / small laptop
-lg: 1024px  — desktop
-```
-
-On mobile, the feedback drawer is full width. On desktop, it matches the 640px content container.
-
----
-
-## Dark Mode
-
-Not in scope for Milestone 1. Do not add dark mode styles now — they'll conflict when we add them properly later.
+### Primary typeface: Feather Bold (bespoke) → Nunito as substitute
+
+Feather Bold is Duolingo's custom typeface, bespoke and unavailable externally. **Nunito** (Google Fonts) is the official substitute recommended by Duolingo's brand guidelines — it shares the same rounded, friendly geometric character.
+
+**Rules:**
+- Always use **lowercase** for headlines. Never all caps. (Capitals only for proper nouns.)
+- Leading: 100–110% for headlines
+- Tracking: -0.02em (roughly -20 units at 1000 UPEm)
+- Never below 30px on screen
+- Keep headlines under 10 words; if longer, switch to DIN Next Rounded (Nunito regular/light weight)
+- Always left-aligned or centered. Never fully justified.
+- Never hyphenated
+
+### Secondary typeface: DIN Next Rounded → Nunito as substitute
+
+Used for body copy, subheadings, and long headlines (>10 words).
+
+**Rules:**
+- Leading: 140%
+- Tracking: 0 (normal)
+- Never below 14px on screen
+- Left-aligned or centered. Never fully justified.
+
+### Type hierarchy
+
+When combining both:
+- Feather Bold (bold Nunito) is always the star — 150% larger than body text
+- DIN Next Rounded (regular Nunito) supports it, never larger
+- Never mix both in the same sentence
+
+### Heading scale (screen)
+
+| Role | Size | Weight | Tracking | Leading |
+|------|------|--------|----------|---------|
+| H1 / Hero headline | 48px (3rem) | 800 | -0.02em | 1.1 |
+| H2 / Section heading | 32px (2rem) | 800 | -0.02em | 1.1 |
+| H3 / Subheading | 24px (1.5rem) | 700 | -0.01em | 1.2 |
+| Body large | 18px | 400 | 0 | 1.4 |
+| Body | 16px | 400 | 0 | 1.4 |
+| Body small / caption | 14px | 400 | 0 | 1.5 |
+| Label / overline | 12px | 700 | 0.08em | 1.5 |
+
+## Layout & Spacing
+
+### Page structure
+
+Duolingo's landing page uses a **single-column, full-width, vertically stacked** layout. There are no sidebar cards or dashboard-style grids. Each content section spans the full viewport width and is constrained only by a max-width container for text readability.
+
+- **Max content width:** 960px (centered)
+- **Hero section:** Full viewport height, centered content (text + mascot illustration + CTA)
+- **Content sections:** Full-width bands, alternating between white and subtle green backgrounds, generous vertical padding (96px+)
+- **Footer:** Full-width dark (Eel) background, multi-column link grid
+
+### Grid
+
+The landing page does NOT use a multi-column card grid. It's a **single-column editorial layout** — one heading + one paragraph per section, stacked vertically. This is the key difference from a dashboard.
+
+### Spacing scale
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| xs | 4px | Tight inline gaps |
+| sm | 8px | Small element spacing |
+| md | 16px | Standard padding, gaps |
+| lg | 24px | Section padding (horizontal) |
+| xl | 32px | Card padding |
+| 2xl | 48px | Between elements in a section |
+| 3xl | 64px | Section top/bottom padding |
+| 4xl | 96px | Major section separation |
+
+## Elevation & Depth
+
+Duolingo's landing page is **flat** — it deliberately avoids card shadows, drop shadows, and layered surfaces. Content sits directly on the background.
+
+- **No card borders or shadows** on content sections
+- **No box shadows** on the hero
+- The only shadows appear on **buttons** (subtle pressed/lifted states) and the **mascot illustration** (optional)
+- Cards and panels, when used in the app UI (not the landing page), get a very subtle border (`1px solid {swan}`) with no shadow
+
+## Shapes
+
+Everything is **rounded**. Duolingo avoids sharp corners entirely:
+
+- **Buttons:** Fully rounded (pill shape, 9999px border-radius)
+- **Cards/panels:** 16px radius
+- **Avatars/icons:** Circular
+- **Illustrations:** Organic, bubbly shapes with no hard edges
+
+## Components
+
+### Button — Primary (Get Started)
+
+The hero CTA is the most important interactive element. It must be impossible to miss:
+
+- Background: Feather Green (#58CC02)
+- Text: White, 16px, weight 700
+- Border-radius: Full pill (9999px)
+- Padding: 16px vertical, 24px+ horizontal
+- Hover: Darker green (#47B300)
+- No border, no shadow (or very subtle)
+- Text is **UPPERCASE** on the landing page ("GET STARTED")
+
+### Button — Secondary (I ALREADY HAVE AN ACCOUNT)
+
+- Background: transparent
+- Text: Eel (#4B4B4B), 14px, weight 700
+- Border: 2px solid Eel (#4B4B4B)
+- Border-radius: Full pill
+- **UPPERCASE** text
+- Hover: Subtle background fill
+
+### Navigation bar
+
+- Fixed/sticky at top
+- White background (#FFFFFF)
+- Contains: Duolingo wordmark logo (left), language selector (right)
+- Height: ~64px
+- Subtle bottom border or none
+- Clean, minimal — no heavy chrome
+
+### Hero section
+
+- Full viewport height
+- Centered layout
+- Contains (top to bottom): Duo owl illustration (large), H1 headline text, "Get Started" button, "I ALREADY HAVE AN ACCOUNT" button
+- Optionally: language course carousel below the CTAs
+- Background: White or very subtle green wash (#D7FFDB)
+
+### Feature sections
+
+Each section has:
+- H2 heading in lowercase bold (e.g., "free. fun. effective.")
+- Body paragraph below
+- Full-width, no card container
+- Generous vertical spacing (96px between sections)
+
+### Footer
+
+- Dark background (Eel #4B4B4B)
+- Multi-column layout (4-6 columns of links)
+- White text
+- Contains: About, Products, Apps, Help, Privacy, Social links
+- Language selector at bottom
+
+## Do's and Don'ts
+
+### Do
+
+- **Use lowercase headlines** — "free. fun. effective." not "Free. Fun. Effective."
+- **Center the hero** — text and mascot centered together
+- **Make the CTA green and pill-shaped** — it should look like a Duolingo button
+- **Leave generous white space** — sections breathe
+- **Use the mascot** — Duo is the brand's most recognizable asset
+- **Keep it flat** — no heavy shadows or card borders on the landing page
+- **Use Nunito** as the typeface — it's the official substitute for Feather Bold
+
+### Don't
+
+- **Don't use all-caps headlines** (buttons can be uppercase, headings cannot)
+- **Don't use a multi-column dashboard layout** for the landing page
+- **Don't use dark/navy/black buttons** — the primary CTA is always green
+- **Don't use card shadows on content sections** — they should be flat
+- **Don't use sharp corners** — everything is rounded
+- **Don't hyphenate text**
+- **Don't justify text** — left-align or center only
+- **Don't use gray or slate backgrounds** — the page is white with green accents
+- **Don't use the green as a full page background** — it's an accent, not a canvas
