@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "Duolingo Clone",
-  description: "A bite-sized Spanish learning experience with streaks, XP, and friendly feedback.",
+  title: "Duolingo - The free, fun, and effective way to learn a language!",
+  description:
+    "Learning with Duolingo is fun and addictive. Earn points for correct answers, race against the clock, and level up.",
+  keywords:
+    "learn, spanish, german, french, portuguese, italian, english, free, lessons, course, language, study, flashcards",
 };
 
 export default function RootLayout({
@@ -23,10 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${nunito.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
