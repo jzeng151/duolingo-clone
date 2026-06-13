@@ -98,6 +98,32 @@ body {
   transform: translateY(2px);
 }
 
+.btn-shadow-red {
+  box-shadow: 0 4px 0 #E63946, 0 6px 8px rgba(0,0,0,0.12);
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+}
+.btn-shadow-red:active {
+  box-shadow: 0 2px 0 #E63946;
+  transform: translateY(2px);
+}
+
+/* ── Lesson motion ── */
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.mascot-bob {
+  animation: mascot-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes feedback-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.feedback-slide-up {
+  animation: feedback-slide-up 0.25s ease-out;
+}
+
 /* ── Duo mascot SVG styling ── */
 .duo-mascot {
   filter: drop-shadow(0 8px 24px rgba(88, 204, 2, 0.25));
