@@ -19,12 +19,17 @@ export default function Lottie({
   loop = true,
   idleFrom,
   idleTo,
+  viewBox,
 }: {
   src: string;
   className?: string;
   loop?: boolean;
   idleFrom?: number;
   idleTo?: number;
+  /* Crop the rendered art to a sub-region of the comp ("x y w h" in comp
+     units). Used to tightly frame Duo in comps that pad the canvas around
+     him. preserveAspectRatio keeps the meet/center fit, so no distortion. */
+  viewBox?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -55,6 +60,12 @@ export default function Lottie({
               path: src,
             }) as unknown as Anim;
 
+            if (viewBox) {
+              anim.addEventListener("DOMLoaded", () => {
+                ref.current?.querySelector("svg")?.setAttribute("viewBox", viewBox);
+              });
+            }
+
             if (idleFrom != null) {
               const a = anim;
               let pinged = false;
@@ -80,7 +91,7 @@ export default function Lottie({
       io.disconnect();
       anim?.destroy();
     };
-  }, [src, loop, idleFrom, idleTo]);
+  }, [src, loop, idleFrom, idleTo, viewBox]);
 
   return <div ref={ref} className={className} aria-hidden="true" />;
 }

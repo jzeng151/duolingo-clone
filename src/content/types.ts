@@ -47,6 +47,27 @@ export type Exercise =
   | {
       type: 'match';
       pairs: Array<{ left: string; right: string }>;
+    }
+  | {
+      // Duolingo "Tap what you hear": audio plays a Spanish sentence and the
+      // learner taps Spanish word tiles to reconstruct it. No written prompt.
+      type: 'listen_tap';
+      /** The Spanish sentence the audio speaks; also the correct answer. */
+      answer: string;
+      /** Word tiles to tap (includes a few distractors). */
+      bank: string[];
+    }
+  | {
+      // Duolingo "Complete the chat": one speaker's line is shown (with audio)
+      // and the learner picks the missing reply from a list.
+      type: 'dialogue';
+      /** The opening line shown in the first speech bubble (Spanish). */
+      lead: string;
+      character?: CharacterId;
+      /** Reply options (Spanish). */
+      options: string[];
+      /** The correct reply. */
+      answer: string;
     };
 
 export const CHARACTERS: Record<CharacterId, { src: string; name: string }> = {
@@ -64,6 +85,8 @@ export function checkAnswer(exercise: Exercise, answer: string): boolean {
     case 'select_image':
     case 'select_translation':
     case 'word_bank':
+    case 'listen_tap':
+    case 'dialogue':
       return normalize(answer) === normalize(exercise.answer);
     case 'match':
       // Wrong pairs can never be locked in the UI, so a completed board is always correct.
@@ -77,6 +100,8 @@ export function solutionText(exercise: Exercise): string {
     case 'select_image':
     case 'select_translation':
     case 'word_bank':
+    case 'listen_tap':
+    case 'dialogue':
       return exercise.answer;
     case 'match':
       return exercise.pairs.map((p) => `${p.left} — ${p.right}`).join(', ');

@@ -57,6 +57,18 @@ export const spanishLesson1: Exercise[] = [
     ],
   },
   {
+    type: 'listen_tap',
+    answer: 'Yo soy un estudiante',
+    bank: ['Yo', 'soy', 'un', 'estudiante', 'eres', 'es'],
+  },
+  {
+    type: 'dialogue',
+    character: 'duo',
+    lead: 'Buenos días',
+    options: ['Buenos días', 'Hasta luego', 'Gracias'],
+    answer: 'Buenos días',
+  },
+  {
     type: 'word_bank',
     instruction: 'Write this in Spanish',
     prompt: 'She is my friend',

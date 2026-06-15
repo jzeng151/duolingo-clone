@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { CHARACTERS, type CharacterId, type Exercise } from '../content/types';
+import Speaker from './Speaker';
+import { playWord } from '../lib/word-audio';
 
 export type { Exercise } from '../content/types';
 
@@ -80,9 +82,9 @@ export default function QuestionDisplay({
 
   // Derive the answer string the footer will grade, or null when not yet checkable.
   let answer: string | null = null;
-  if (exercise.type === 'select_image' || exercise.type === 'select_translation') {
+  if (exercise.type === 'select_image' || exercise.type === 'select_translation' || exercise.type === 'dialogue') {
     answer = selected;
-  } else if (exercise.type === 'word_bank') {
+  } else if (exercise.type === 'word_bank' || exercise.type === 'listen_tap') {
     answer = placed.length > 0 ? placed.join(' ') : null;
   } else if (exercise.type === 'match') {
     answer = matched.length === exercise.pairs.length ? JSON.stringify(matched) : null;
@@ -94,8 +96,17 @@ export default function QuestionDisplay({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);
 
+  // Audio-driven questions auto-play their clip when they appear (QuestionDisplay
+  // is keyed by index in LessonRunner, so this runs once per question).
+  useEffect(() => {
+    if (exercise.type === 'listen_tap') playWord(exercise.answer);
+    else if (exercise.type === 'dialogue') playWord(exercise.lead);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function toggleBankWord(word: string, fromBank: boolean) {
     if (fromBank) {
+      playWord(word);
       setPlaced((p) => [...p, word]);
     } else {
       // remove the first matching placed instance
@@ -132,7 +143,10 @@ export default function QuestionDisplay({
                 key={opt.word}
                 index={i}
                 selected={selected === opt.word}
-                onClick={() => setSelected(opt.word)}
+                onClick={() => {
+                  playWord(opt.word);
+                  setSelected(opt.word);
+                }}
                 className="flex flex-col items-center gap-3 pt-8"
               >
                 <span className="text-6xl leading-none">{opt.emoji}</span>
@@ -278,6 +292,101 @@ export default function QuestionDisplay({
                 );
               })}
             </div>
+          </div>
+        </>
+      )}
+
+      {exercise.type === 'listen_tap' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">Tap what you hear</h2>
+
+          {/* Normal + slow speaker, as Duolingo's listen challenge shows */}
+          <div className="flex items-center gap-3 border-b-2 border-[#E5E5E5] pb-6">
+            <Speaker text={exercise.answer} />
+            <Speaker text={exercise.answer} slow />
+          </div>
+
+          {/* Answer line */}
+          <div className="flex min-h-[60px] flex-wrap content-start items-start gap-2 border-b-2 border-[#E5E5E5] pb-3">
+            {placed.map((word, i) => (
+              <button
+                key={`${word}-${i}`}
+                type="button"
+                onClick={() => toggleBankWord(word, false)}
+                className="rounded-xl border-2 border-b-4 border-[#E5E5E5] bg-white px-4 py-2 text-base font-bold text-[#4B4B4B]"
+              >
+                {word}
+              </button>
+            ))}
+          </div>
+
+          {/* Word bank */}
+          <div className="flex flex-wrap gap-2">
+            {exercise.bank.map((word, i) => {
+              const usedCount = placed.filter((w) => w === word).length;
+              const bankCount = exercise.bank.filter((w) => w === word).length;
+              const exhausted = usedCount >= bankCount;
+              return (
+                <button
+                  key={`${word}-${i}`}
+                  type="button"
+                  disabled={exhausted}
+                  onClick={() => toggleBankWord(word, true)}
+                  className={`rounded-xl border-2 border-b-4 px-4 py-2 text-base font-bold transition-colors ${
+                    exhausted
+                      ? 'border-[#E5E5E5] bg-[#E5E5E5] text-[#E5E5E5]'
+                      : 'border-[#E5E5E5] bg-white text-[#4B4B4B] hover:bg-[#F7F7F7]'
+                  }`}
+                >
+                  {word}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {exercise.type === 'dialogue' && (
+        <>
+          <h2 className="text-2xl font-bold text-[#4B4B4B]">Complete the chat</h2>
+
+          {/* Opening line: character + audio bubble */}
+          <div className="flex items-end gap-3">
+            <img
+              src={CHARACTERS[exercise.character ?? 'duo'].src}
+              alt={CHARACTERS[exercise.character ?? 'duo'].name}
+              className="h-20 w-20 shrink-0 object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => playWord(exercise.lead)}
+              className="relative mb-4 flex items-center gap-2 rounded-2xl border-2 border-[#E5E5E5] bg-white px-4 py-3 text-left"
+            >
+              <span
+                className="absolute -left-2 bottom-3 h-3 w-3 rotate-45 border-b-2 border-l-2 border-[#E5E5E5] bg-white"
+                aria-hidden="true"
+              />
+              <Speaker text={exercise.lead} slow className="!h-8 !w-8 !border-b-2" />
+              <span className="text-lg font-bold text-[#4B4B4B]">{exercise.lead}</span>
+            </button>
+          </div>
+
+          {/* Reply options */}
+          <div className="space-y-3">
+            {exercise.options.map((opt, i) => (
+              <OptionCard
+                key={opt}
+                index={i}
+                selected={selected === opt}
+                onClick={() => {
+                  playWord(opt);
+                  setSelected(opt);
+                }}
+                className="flex items-center pl-12"
+              >
+                <span className="text-lg font-bold text-[#4B4B4B]">{opt}</span>
+              </OptionCard>
+            ))}
           </div>
         </>
       )}

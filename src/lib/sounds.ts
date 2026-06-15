@@ -1,43 +1,28 @@
 'use client';
 
-/* Tiny synthesized feedback tones so the lesson has Duolingo's signature
-   "ding / buzz" feel without shipping any audio assets. No-ops on the
-   server and if the Web Audio API is unavailable. */
+/* Duolingo's real lesson feedback effects, captured from the web app:
+   correct  = sounds/37d8f0b39dcfe63872192c89653a93f6.mp3
+   incorrect= sounds/f0b6ab4396d5891241ef4ca73b4de13a.mp3
+   Played via cached <audio> elements. No-ops on the server. */
 
-let ctx: AudioContext | null = null;
+let correctEl: HTMLAudioElement | null = null;
+let wrongEl: HTMLAudioElement | null = null;
 
-function audioContext(): AudioContext | null {
-  if (typeof window === 'undefined') return null;
-  const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!Ctor) return null;
-  if (!ctx) ctx = new Ctor();
-  return ctx;
-}
-
-function tone(freq: number, start: number, duration: number) {
-  const ac = audioContext();
-  if (!ac) return;
-  const osc = ac.createOscillator();
-  const gain = ac.createGain();
-  osc.type = 'sine';
-  osc.frequency.value = freq;
-  const t = ac.currentTime + start;
-  gain.gain.setValueAtTime(0.0001, t);
-  gain.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-  osc.connect(gain).connect(ac.destination);
-  osc.start(t);
-  osc.stop(t + duration + 0.02);
+function play(el: HTMLAudioElement | null) {
+  if (!el) return;
+  el.currentTime = 0;
+  // Autoplay can reject before the first user gesture; ignore that.
+  void el.play().catch(() => {});
 }
 
 export function playCorrect() {
-  // Bright ascending two-note chime.
-  tone(587.33, 0, 0.12); // D5
-  tone(880.0, 0.1, 0.18); // A5
+  if (typeof window === 'undefined') return;
+  if (!correctEl) correctEl = new Audio('/audio/sfx/correct.mp3');
+  play(correctEl);
 }
 
 export function playWrong() {
-  // Low descending buzz.
-  tone(196.0, 0, 0.18); // G3
-  tone(146.83, 0.12, 0.22); // D3
+  if (typeof window === 'undefined') return;
+  if (!wrongEl) wrongEl = new Audio('/audio/sfx/incorrect.mp3');
+  play(wrongEl);
 }
