@@ -1,10 +1,16 @@
-import LessonRunner from '../../src/components/LessonRunner';
+import LessonClient from '../../src/components/LessonClient';
 import { completeLesson } from '../../src/actions/completeLesson';
-import { spanishLesson1 } from '../../src/content/spanish-lesson-1';
+import { createServerSupabaseClient } from '../../lib/supabase-server';
 
 const LESSON_ID = 'spanish-lesson-1';
 
-export default function LessonPage() {
+export default async function LessonPage() {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isAuthenticated = Boolean(user);
+
   async function handleComplete(_: { xpEarned: number }) {
     'use server';
 
@@ -19,10 +25,7 @@ export default function LessonPage() {
 
   return (
     <main className="flex flex-1 flex-col bg-white">
-      <LessonRunner
-        exercises={spanishLesson1}
-        onComplete={handleComplete}
-      />
+      <LessonClient isAuthenticated={isAuthenticated} onComplete={handleComplete} />
     </main>
   );
 }

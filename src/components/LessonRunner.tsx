@@ -29,9 +29,12 @@ function Hearts({ count }: { count: number }) {
 export default function LessonRunner({
   exercises,
   onComplete,
+  isAuthenticated = true,
 }: {
   exercises: Exercise[];
   onComplete: (payload: { xpEarned: number }) => Promise<OnCompleteResult>;
+  /** Anonymous learners finish the lesson locally and are then asked to sign up. */
+  isAuthenticated?: boolean;
 }) {
   // Start the lesson immediately: run the machine's START transition once so
   // 'idle' is never rendered (avoids a setState-in-effect on mount).
@@ -85,6 +88,14 @@ export default function LessonRunner({
   }
 
   async function persistResults() {
+    // Anonymous run: nothing to save server-side. Finish locally; the
+    // completion screen then invites the learner to create an account.
+    if (!isAuthenticated) {
+      setStreakDays(0);
+      setState((prev) => transition(prev, { type: 'SAVE_SUCCESS', xpEarned, newStreak: 0 }).nextState);
+      return;
+    }
+
     try {
       const result = await onComplete({ xpEarned });
       const xp = result?.xpEarned ?? xpEarned;
@@ -107,7 +118,7 @@ export default function LessonRunner({
 
   // Terminal screens take over the whole view.
   if (state === 'complete') {
-    return <CompletionScreen status="success" streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} />;
+    return <CompletionScreen status="success" anonymous={!isAuthenticated} streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} />;
   }
   if (state === 'error') {
     return <CompletionScreen status="error" onRetry={handleRetry} />;

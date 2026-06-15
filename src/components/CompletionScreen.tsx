@@ -5,7 +5,7 @@ import HeroAnimation from '../../app/components/HeroAnimation';
 
 type CompletionScreenProps =
   | { status: 'loading' }
-  | { status: 'success'; streakDays: number; xpEarned: number; accuracy: number }
+  | { status: 'success'; streakDays: number; xpEarned: number; accuracy: number; anonymous?: boolean }
   | { status: 'error'; onRetry: () => void };
 
 function StatCard({ color, label, value }: { color: string; label: string; value: string }) {
@@ -43,12 +43,29 @@ export default function CompletionScreen(props: CompletionScreenProps) {
             <StatCard color="#FF9600" label="Streak" value={`🔥 ${props.streakDays}`} />
           </div>
 
-          <Link
-            href="/learn"
-            className="btn-shadow-green mt-10 w-full max-w-md rounded-2xl bg-[#58CC02] px-6 py-4 text-lg font-bold uppercase tracking-wide text-white"
-          >
-            Continue
-          </Link>
+          {props.anonymous ? (
+            <>
+              <p className="mt-10 max-w-md text-base font-medium text-[#777777]">
+                Create a profile to save your XP and keep your streak going!
+              </p>
+              <Link
+                href="/signup"
+                className="btn-shadow-green mt-4 w-full max-w-md rounded-2xl bg-[#58CC02] px-6 py-4 text-lg font-bold uppercase tracking-wide text-white"
+              >
+                Create a profile
+              </Link>
+              <Link href="/login" className="mt-4 text-sm font-bold uppercase tracking-wide text-[#1CB0F6]">
+                I already have an account
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/learn"
+              className="btn-shadow-green mt-10 w-full max-w-md rounded-2xl bg-[#58CC02] px-6 py-4 text-lg font-bold uppercase tracking-wide text-white"
+            >
+              Continue
+            </Link>
+          )}
         </>
       ) : (
         <>

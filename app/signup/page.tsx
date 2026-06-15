@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "../../lib/supabase-browser";
+import { syncOnboarding } from "../../src/lib/syncOnboarding";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function SignupPage() {
         return;
       }
 
+      await syncOnboarding();
       router.push("/learn");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unexpected error occurred.");
