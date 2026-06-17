@@ -32,5 +32,41 @@ export default function LessonClient({
     );
   }
 
-  return <LessonRunner exercises={exercises} isAuthenticated={isAuthenticated} onComplete={onComplete} />;
+  return (
+  <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4">
+    <section className="rounded-2xl border border-[#E5E5E5] bg-white p-4 shadow-sm">
+      <h2 className="mb-3 text-lg font-bold text-[#1F2937]">
+        Skill Tree
+      </h2>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {exercises.map((exercise, exerciseIndex) => {
+          const isUnlocked = exerciseIndex === 0;
+
+          return (
+            <div
+              key={exercise.id ?? exerciseIndex}
+              className={`rounded-xl border p-4 text-center ${
+                isUnlocked
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-300 bg-gray-100 text-gray-500"
+              }`}
+            >
+              <div className="text-2xl">{isUnlocked ? "🔓" : "🔒"}</div>
+              <p className="mt-2 font-semibold">Lesson {exerciseIndex + 1}</p>
+              <p className="text-sm">{isUnlocked ? "Unlocked" : "Locked"}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <LessonRunner
+      exercises={exercises}
+      isAuthenticated={isAuthenticated}
+      onComplete={onComplete}
+    />
+  </div>
+);
 }
+

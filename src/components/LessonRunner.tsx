@@ -42,6 +42,7 @@ export default function LessonRunner({
     () => transition(initialLessonState, { type: 'START' }).nextState,
   );
   const [index, setIndex] = useState(0);
+  const [exerciseQueue, setExerciseQueue] =useState (exercises);
   const [xpEarned, setXpEarned] = useState(0);
   const [streakDays, setStreakDays] = useState<number | null>(null);
   const [hearts, setHearts] = useState(TOTAL_HEARTS);
@@ -49,8 +50,8 @@ export default function LessonRunner({
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
   const submissionLockedRef = useRef(false);
 
-  const currentExercise = exercises.length > 0 ? exercises[index] : null;
-  const progress = exercises.length > 0 ? Math.round((index / exercises.length) * 100) : 0;
+  const currentExercise = exerciseQueue.length > 0 ? exerciseQueue[index] : null;
+  const progress = exerciseQueue.length > 0 ? Math.round((index / exerciseQueue.length) * 100) : 0;
   const inFeedback = state === 'feedback_correct' || state === 'feedback_wrong';
 
   function handleCheck() {
@@ -66,6 +67,7 @@ export default function LessonRunner({
     } else {
       setHearts((h) => Math.max(0, h - 1));
       setMistakes((m) => m + 1);
+      if (currentExercise) {setExerciseQueue ((queue) => [...queue, currentExercise]);}
       playWrong();
     }
 
@@ -77,7 +79,7 @@ export default function LessonRunner({
 
     if (!isLast) {
       setCurrentAnswer(null);
-      setIndex((i) => Math.min(i + 1, exercises.length - 1));
+      setIndex((i) => Math.min(i + 1, exerciseQueue.length - 1));
       submissionLockedRef.current = false;
       return;
     }
