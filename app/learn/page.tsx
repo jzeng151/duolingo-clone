@@ -107,9 +107,14 @@ function SideNav() {
 
 function MobileTopBar({ streak, xp }: { streak: number; xp: number }) {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-[#E5E5E5] bg-white px-4 py-3 xl:hidden">
+    <header className="sticky top-0 z-10 flex items-center gap-3 border-b-2 border-[#E5E5E5] bg-white px-4 py-3 xl:hidden">
       <span className="text-2xl font-extrabold tracking-tight text-[#58CC02]">duolingo</span>
-      <StatsRow streak={streak} xp={xp} />
+      <div className="ml-auto flex items-center gap-3">
+        <StatsRow streak={streak} xp={xp} />
+        {/* The desktop SideNav (and its logout) is hidden below xl, so surface a
+            compact logout here too. */}
+        <SignOutButton compact />
+      </div>
     </header>
   );
 }
