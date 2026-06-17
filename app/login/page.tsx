@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "../../lib/supabase-browser";
 import { syncOnboarding } from "../../src/lib/syncOnboarding";
+import { AuthShell, OAuthButtons, authInputClass } from "../components/AuthShell";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,57 +48,60 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-10">
-        <div className="rounded-[32px] border border-slate-200 bg-white p-10 shadow-lg shadow-slate-900/5">
-          <div className="mb-8">
-            <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Welcome back</p>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight">Log in to Duolingo Clone</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Continue your progress and keep your streak going.</p>
-          </div>
+    <AuthShell switchHref="/signup" switchLabel="Sign up">
+      <h1 className="mb-6 text-center text-2xl font-extrabold text-[#3C3C3C]">Log in</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <label className="block text-sm font-semibold text-slate-900">
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-              />
-            </label>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+          placeholder="Email or username"
+          className={authInputClass}
+        />
 
-            <label className="block text-sm font-semibold text-slate-900">
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-              />
-            </label>
-
-            {error ? <p className="rounded-3xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {loading ? "Signing in..." : "Log in"}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-slate-600">
-            New here?{' '}
-            <Link href="/signup" className="font-semibold text-slate-950 hover:underline">
-              Create an account
-            </Link>
-          </p>
+        <div className="relative">
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            placeholder="Password"
+            className={authInputClass}
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold uppercase tracking-wide text-[#1CB0F6]">
+            Forgot?
+          </span>
         </div>
-      </div>
-    </div>
+
+        {error ? (
+          <p className="rounded-xl bg-[#FFDFE0] px-4 py-3 text-sm font-semibold text-[#EA2B2B]">{error}</p>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-shadow-blue w-full rounded-2xl bg-[#1CB0F6] px-5 py-3.5 text-base font-bold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? "Logging in..." : "Log in"}
+        </button>
+      </form>
+
+      <OAuthButtons />
+
+      <p className="mt-8 text-center text-xs leading-5 text-[#AFAFAF]">
+        By signing in to Duolingo, you agree to our{" "}
+        <span className="font-bold text-[#777777]">Terms</span> and{" "}
+        <span className="font-bold text-[#777777]">Privacy Policy</span>.
+      </p>
+
+      <p className="mt-6 text-center text-sm text-[#777777]">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="font-bold uppercase text-[#1CB0F6]">
+          Sign up
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

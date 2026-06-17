@@ -1,6 +1,11 @@
 import type { Exercise } from './types';
 import type { LearningReason } from '../lib/onboarding';
 import { spanishLesson1 } from './spanish-lesson-1';
+import { spanishLesson1_2, spanishLesson1_3, spanishLesson1_4 } from './spanish-unit1';
+import { spanishLesson2_1, spanishLesson2_2, spanishLesson2_3, spanishLesson2_4 } from './spanish-unit2';
+import { spanishLesson3_1, spanishLesson3_2, spanishLesson3_3, spanishLesson3_4 } from './spanish-unit3';
+import { spanishLesson4_1, spanishLesson4_2, spanishLesson4_3, spanishLesson4_4 } from './spanish-unit4';
+import { spanishLesson5_1, spanishLesson5_2, spanishLesson5_3, spanishLesson5_4 } from './spanish-unit5';
 
 /* ═══════════════════════════════════════════════════════════════
    Reason-themed Spanish lessons.
@@ -280,4 +285,39 @@ const themedLessons: Partial<Record<LearningReason, Exercise[]>> = {
 /** The first Spanish lesson, themed to the learner's reason for learning. */
 export function getSpanishLesson(reason: LearningReason): Exercise[] {
   return themedLessons[reason] ?? spanishLesson1;
+}
+
+/* Fixed lessons keyed by the ids used in the course manifest and in
+   lesson_completions. Lesson 1 is intentionally absent: it stays themed by
+   the onboarding reason and is resolved by getLessonById below. */
+const fixedLessons: Record<string, Exercise[]> = {
+  'spanish-1-2': spanishLesson1_2,
+  'spanish-1-3': spanishLesson1_3,
+  'spanish-1-4': spanishLesson1_4,
+  'spanish-2-1': spanishLesson2_1,
+  'spanish-2-2': spanishLesson2_2,
+  'spanish-2-3': spanishLesson2_3,
+  'spanish-2-4': spanishLesson2_4,
+  'spanish-3-1': spanishLesson3_1,
+  'spanish-3-2': spanishLesson3_2,
+  'spanish-3-3': spanishLesson3_3,
+  'spanish-3-4': spanishLesson3_4,
+  'spanish-4-1': spanishLesson4_1,
+  'spanish-4-2': spanishLesson4_2,
+  'spanish-4-3': spanishLesson4_3,
+  'spanish-4-4': spanishLesson4_4,
+  'spanish-5-1': spanishLesson5_1,
+  'spanish-5-2': spanishLesson5_2,
+  'spanish-5-3': spanishLesson5_3,
+  'spanish-5-4': spanishLesson5_4,
+};
+
+/**
+ * Resolve a lesson's exercises by its course-manifest id. Lesson 1
+ * (`spanish-lesson-1`) keeps its onboarding-themed content; every other id
+ * maps to a fixed lesson. Falls back to the base lesson for unknown ids.
+ */
+export function getLessonById(id: string, reason: LearningReason): Exercise[] {
+  if (id === 'spanish-lesson-1') return getSpanishLesson(reason);
+  return fixedLessons[id] ?? spanishLesson1;
 }

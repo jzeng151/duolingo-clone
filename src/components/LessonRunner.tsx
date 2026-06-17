@@ -41,7 +41,13 @@ export default function LessonRunner({
   const [state, setState] = useState<LessonState>(
     () => transition(initialLessonState, { type: 'START' }).nextState,
   );
-  const [index, setIndex] = useState(0);
+  // Exercises still to be answered correctly. The head is the current question.
+  // A wrong answer pushes its exercise back onto the tail, so the lesson can't
+  // finish until every exercise has been answered correctly at least once.
+  const [queue, setQueue] = useState<Exercise[]>(() => exercises);
+  // Monotonic counter used only as a React remount key: a re-queued exercise
+  // reappears and must mount fresh rather than reuse the previous instance.
+  const [step, setStep] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [streakDays, setStreakDays] = useState<number | null>(null);
   const [hearts, setHearts] = useState(TOTAL_HEARTS);
@@ -49,8 +55,9 @@ export default function LessonRunner({
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
   const submissionLockedRef = useRef(false);
 
-  const currentExercise = exercises.length > 0 ? exercises[index] : null;
-  const progress = exercises.length > 0 ? Math.round((index / exercises.length) * 100) : 0;
+  const currentExercise = queue.length > 0 ? queue[0] : null;
+  const progress =
+    exercises.length > 0 ? Math.round(((exercises.length - queue.length) / exercises.length) * 100) : 0;
   const inFeedback = state === 'feedback_correct' || state === 'feedback_wrong';
 
   function handleCheck() {
@@ -72,17 +79,27 @@ export default function LessonRunner({
     setState((prev) => transition(prev, { type: 'SUBMIT', answer: currentAnswer, isCorrect }).nextState);
   }
 
-  async function handleContinueFromFeedback(isLast: boolean) {
+  async function handleContinueFromFeedback() {
+    const wasCorrect = state === 'feedback_correct';
+    // The lesson ends only when the final remaining exercise was just answered
+    // correctly. A wrong answer re-queues it, so there is always more to do.
+    const isLast = wasCorrect && queue.length === 1;
     setState((prev) => transition(prev, { type: 'NEXT', isLast }).nextState);
 
     if (!isLast) {
       setCurrentAnswer(null);
-      setIndex((i) => Math.min(i + 1, exercises.length - 1));
+      setQueue((prev) => {
+        const [head, ...rest] = prev;
+        return wasCorrect ? rest : [...rest, head];
+      });
+      setStep((s) => s + 1);
       submissionLockedRef.current = false;
       return;
     }
 
-    // Final question: queue the second NEXT (done -> persisting), then persist.
+    // Final question: drain the queue, queue the second NEXT (done ->
+    // persisting), then persist.
+    setQueue((prev) => prev.slice(1));
     setState((prev) => transition(prev, { type: 'NEXT', isLast: true }).nextState);
     await persistResults();
   }
@@ -113,8 +130,14 @@ export default function LessonRunner({
     void persistResults();
   }
 
+  // Each exercise is answered correctly exactly once (exercises.length correct
+  // submissions); every wrong answer is one extra submission. Accuracy is
+  // correct over total submissions, which stays valid when re-queuing pushes
+  // the mistake count past the number of exercises.
   const accuracy =
-    exercises.length > 0 ? Math.round(((exercises.length - mistakes) / exercises.length) * 100) : 0;
+    exercises.length > 0
+      ? Math.round((exercises.length / (exercises.length + mistakes)) * 100)
+      : 0;
 
   // Terminal screens take over the whole view.
   if (state === 'complete') {
@@ -150,12 +173,12 @@ export default function LessonRunner({
       <main className={`flex-1 overflow-y-auto px-4 py-6 sm:px-6 ${inFeedback ? 'pb-56' : ''}`}>
         <div className="mx-auto max-w-2xl">
           {currentExercise ? (
-            <QuestionDisplay key={index} exercise={currentExercise} onAnswerChange={setCurrentAnswer} />
+            <QuestionDisplay key={step} exercise={currentExercise} onAnswerChange={setCurrentAnswer} />
           ) : (
             <div className="rounded-xl border border-[#E5E5E5] bg-white p-6 text-center">No exercises available.</div>
           )}
 
-          {inFeedback && <FeedbackMascot key={`fb-${index}`} isCorrect={state === 'feedback_correct'} />}
+          {inFeedback && <FeedbackMascot key={`fb-${step}`} isCorrect={state === 'feedback_correct'} />}
         </div>
       </main>
 
@@ -183,7 +206,7 @@ export default function LessonRunner({
         <FeedbackDrawer
           isCorrect={state === 'feedback_correct'}
           correctAnswer={solutionText(currentExercise)}
-          onContinue={() => handleContinueFromFeedback(index === exercises.length - 1)}
+          onContinue={() => handleContinueFromFeedback()}
         />
       )}
     </div>

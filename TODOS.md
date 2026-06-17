@@ -163,8 +163,8 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 Don't start these until Milestone 1 is fully working and feels good.
 
-- [ ] **Wrong-answer re-queuing** — When a user gets an answer wrong, add that exercise back into the queue so they have to get it right before finishing the lesson.
-- [ ] **Skill tree / course map** — A visual map of all the available lessons, showing which are locked and which are unlocked.
+- [x] **Wrong-answer re-queuing** — When a user gets an answer wrong, add that exercise back into the queue so they have to get it right before finishing the lesson.
+- [x] **Skill tree / course map** — A visual map of all the available lessons, showing which are locked and which are unlocked.
 - [ ] **Hearts / lives system** — Give users a limited number of wrong answers before the lesson ends.
 - [ ] **Placement test** — Let returning learners skip beginner content by testing out of early lessons.
 - [ ] **Streak freeze** — Let users protect a streak on a missed day.
@@ -178,6 +178,16 @@ Don't start these until Milestone 1 is fully working and feels good.
 ---
 
 ## Deferred Notes
+
+### Mascot SVG flagged as LCP on /learn (QA 2026-06-17, low)
+
+**What:** Console warns that `/assets/mascot_happy.svg` is the Largest Contentful Paint on `/learn`; the mascot renders beside each of the 5 units.
+
+**Why:** Cosmetic performance hint, not a functional bug. Deferred (below Standard-tier fix threshold).
+
+**How:** Add `loading="eager"`/`priority` to the first above-the-fold mascot `Image`, or mark only the first instance as priority.
+
+**Where to start:** `app/learn/page.tsx` — the `Image` in the `Unit` component.
 
 ### Timezone auto-detection on signup
 
