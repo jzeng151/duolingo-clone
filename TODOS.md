@@ -179,6 +179,16 @@ Don't start these until Milestone 1 is fully working and feels good.
 
 ## Deferred Notes
 
+### Mascot SVG flagged as LCP on /learn (QA 2026-06-17, low)
+
+**What:** Console warns that `/assets/mascot_happy.svg` is the Largest Contentful Paint on `/learn`; the mascot renders beside each of the 5 units.
+
+**Why:** Cosmetic performance hint, not a functional bug. Deferred (below Standard-tier fix threshold).
+
+**How:** Add `loading="eager"`/`priority` to the first above-the-fold mascot `Image`, or mark only the first instance as priority.
+
+**Where to start:** `app/learn/page.tsx` — the `Image` in the `Unit` component.
+
 ### Timezone auto-detection on signup
 
 **What:** On new user sign-up, detect the user's browser timezone automatically and save it to their account instead of defaulting to Pacific Time.
