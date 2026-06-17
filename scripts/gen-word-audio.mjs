@@ -5,11 +5,19 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-const files = ['src/content/spanish-lesson-1.ts', 'src/content/spanish-lessons.ts'];
+const files = [
+  'src/content/spanish-lesson-1.ts',
+  'src/content/spanish-lessons.ts',
+  'src/content/spanish-unit1.ts',
+  'src/content/spanish-unit2.ts',
+  'src/content/spanish-unit3.ts',
+  'src/content/spanish-unit4.ts',
+  'src/content/spanish-unit5.ts',
+];
 const src = files.map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 
 const set = new Set();
-for (const m of src.matchAll(/(?:answer|lead):\s*"([^"]+)"/g)) set.add(m[1]);
+for (const m of src.matchAll(/(?:answer|lead):\s*(?:'([^']+)'|"([^"]+)")/g)) set.add(m[1] || m[2]);
 for (const m of src.matchAll(/word:\s*["']([^"']+)["']/g)) set.add(m[1]);
 for (const m of src.matchAll(/right:\s*["']([^"']+)["']/g)) set.add(m[1]);
 for (const m of src.matchAll(/(?:options|bank):\s*\[([^\]]+)\]/g)) {
