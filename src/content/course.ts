@@ -83,7 +83,14 @@ export const UNITS: CourseUnit[] = [
   },
 ];
 
-/** All lesson ids in path order — the spine of the unlock logic. */
+/**
+ * All lesson ids in path order — the spine of the unlock logic.
+ *
+ * NOTE: this order is mirrored in the database by the `course_lessons` table
+ * (supabase/migrations/004_lesson_unlock.sql), which gates complete_lesson().
+ * If you add or reorder lessons here, add a follow-up migration to keep that
+ * table in sync, or the route map and the write path will disagree.
+ */
 export const ALL_LESSON_IDS: string[] = UNITS.flatMap((u) => u.lessons.map((l) => l.id));
 
 export function isKnownLessonId(id: string): boolean {
