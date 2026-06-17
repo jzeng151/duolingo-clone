@@ -1,7 +1,8 @@
+import { redirect } from 'next/navigation';
 import LessonClient from '../../src/components/LessonClient';
 import { completeLesson } from '../../src/actions/completeLesson';
 import { createServerSupabaseClient } from '../../lib/supabase-server';
-import { isKnownLessonId } from '../../src/content/course';
+import { computeStates, isKnownLessonId } from '../../src/content/course';
 
 const DEFAULT_LESSON_ID = 'spanish-lesson-1';
 
@@ -21,6 +22,18 @@ export default async function LessonPage({
     data: { user },
   } = await supabase.auth.getUser();
   const isAuthenticated = Boolean(user);
+
+  // Enforce sequential unlock on the route, not just in the map UI: a lesson is
+  // playable only once every earlier lesson is complete. Without this, a learner
+  // could deep-link straight to a locked lesson and skip the whole course.
+  const { data: completions } = await supabase
+    .from('lesson_completions')
+    .select('lesson_id')
+    .eq('user_id', user?.id ?? '');
+  const completed = new Set((completions ?? []).map((row) => row.lesson_id as string));
+  if (computeStates(completed)[lessonId] === 'locked') {
+    redirect('/learn');
+  }
 
   async function handleComplete() {
     'use server';
