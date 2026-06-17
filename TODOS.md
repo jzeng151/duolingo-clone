@@ -163,8 +163,8 @@ Both of you need to do this before splitting off. It takes about an hour.
 
 Don't start these until Milestone 1 is fully working and feels good.
 
-- [ ] **Wrong-answer re-queuing** — When a user gets an answer wrong, add that exercise back into the queue so they have to get it right before finishing the lesson.
-- [ ] **Skill tree / course map** — A visual map of all the available lessons, showing which are locked and which are unlocked.
+- [x] **Wrong-answer re-queuing** — When a user gets an answer wrong, add that exercise back into the queue so they have to get it right before finishing the lesson.
+- [x] **Skill tree / course map** — A visual map of all the available lessons, showing which are locked and which are unlocked.
 - [ ] **Hearts / lives system** — Give users a limited number of wrong answers before the lesson ends.
 - [ ] **Placement test** — Let returning learners skip beginner content by testing out of early lessons.
 - [ ] **Streak freeze** — Let users protect a streak on a missed day.

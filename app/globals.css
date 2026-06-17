@@ -89,6 +89,19 @@ body {
   transform: translateY(2px);
 }
 
+.btn-shadow-blue {
+  box-shadow: 0 4px 0 #1899D6, 0 6px 8px rgba(0,0,0,0.12);
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+}
+.btn-shadow-blue:hover {
+  box-shadow: 0 4px 0 #1899D6, 0 8px 12px rgba(0,0,0,0.18);
+  transform: translateY(-1px);
+}
+.btn-shadow-blue:active {
+  box-shadow: 0 2px 0 #1899D6;
+  transform: translateY(2px);
+}
+
 .btn-shadow-beetle {
   box-shadow: 0 4px 0 #A55CD6, 0 6px 8px rgba(0,0,0,0.12);
   transition: box-shadow 0.1s ease, transform 0.1s ease;
