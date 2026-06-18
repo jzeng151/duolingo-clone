@@ -1,9 +1,10 @@
 import { describe, test, expect } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { checkAnswer, type Exercise } from '../src/content/types';
 import { getSpanishLesson, getLessonById } from '../src/content/spanish-lessons';
 import { ALL_LESSON_IDS } from '../src/content/course';
+import { wordAudioSrc } from '../src/lib/word-audio';
 import type { LearningReason } from '../src/lib/onboarding';
 import manifest from '../src/content/word-audio.json';
 
@@ -101,6 +102,15 @@ describe('content integrity', () => {
             if (i >= 0) remaining.splice(i, 1);
           }
           expect(checkAnswer(ex, ex.answer)).toBe(true);
+          // listen_tap has NO written prompt — QuestionDisplay auto-plays
+          // playWord(answer) (QuestionDisplay.tsx:102). Without audio the
+          // exercise is silent and unsolvable, so the answer MUST have a clip.
+          if (ex.type === 'listen_tap') {
+            expect(
+              wordAudioSrc(ex.answer),
+              `listen_tap answer "${ex.answer}" has no audio in word-audio.json`
+            ).toBeTruthy();
+          }
           break;
         }
 
@@ -121,36 +131,48 @@ describe('content integrity', () => {
   });
 });
 
-describe('course map ↔ database sync (migration 004)', () => {
-  // course_lessons in 004_lesson_unlock.sql is the DB's source of truth for the
-  // sequential-unlock guard. It must mirror ALL_LESSON_IDS exactly, in order.
-  // If they drift, the route map and the write path disagree.
-  const sql = readFileSync(
-    join(process.cwd(), 'supabase/migrations/004_lesson_unlock.sql'),
-    'utf8'
-  );
+describe('course map ↔ database sync (all migrations)', () => {
+  // course_lessons is the DB's source of truth for the sequential-unlock guard;
+  // its final migrated state must mirror ALL_LESSON_IDS exactly, in order.
+  //
+  // We replay EVERY migration (not just 004) so the documented growth path holds:
+  // course.ts says to add lessons via a follow-up migration rather than editing a
+  // historical one. We scan all migration files in filename order, collect every
+  // `course_lessons` (lesson_id, position) tuple, and apply last-write-wins per
+  // lesson_id — so a later `005_*` that inserts or repositions rows is honored.
+  const dir = join(process.cwd(), 'supabase/migrations');
+  const files = readdirSync(dir)
+    .filter((f) => f.endsWith('.sql'))
+    .sort();
 
-  // Parse only the `insert into public.course_lessons ... values (...)` block so
-  // an unrelated `('x', 1)` tuple elsewhere in the file can't pollute the check.
-  const block = sql.match(
-    /insert\s+into\s+public\.course_lessons[^;]*?values([\s\S]*?);/i
-  );
-  const rows = block
-    ? [...block[1].matchAll(/\(\s*'([^']+)'\s*,\s*(\d+)\s*\)/g)].map((m) => ({
-        id: m[1],
-        position: Number(m[2]),
-      }))
-    : [];
+  // Final position per lesson_id after all migrations are applied.
+  const finalPos = new Map<string, number>();
+  for (const file of files) {
+    const sql = readFileSync(join(dir, file), 'utf8');
+    // Only `insert into ... course_lessons ... values (...)` blocks, so an
+    // unrelated `('x', 1)` tuple elsewhere in a file can't pollute the parse.
+    for (const block of sql.matchAll(
+      /insert\s+into\s+public\.course_lessons[^;]*?values([\s\S]*?);/gi
+    )) {
+      for (const m of block[1].matchAll(/\(\s*'([^']+)'\s*,\s*(\d+)\s*\)/g)) {
+        finalPos.set(m[1], Number(m[2]));
+      }
+    }
+  }
 
-  test('the migration has a parseable course_lessons insert', () => {
+  const rows = [...finalPos.entries()]
+    .map(([id, position]) => ({ id, position }))
+    .sort((a, b) => a.position - b.position);
+
+  test('at least one migration defines the full course_lessons table', () => {
     expect(rows.length).toBe(ALL_LESSON_IDS.length);
   });
 
-  test('migration lists the same lesson ids in the same order as ALL_LESSON_IDS', () => {
+  test('final migrated order matches ALL_LESSON_IDS', () => {
     expect(rows.map((r) => r.id)).toEqual(ALL_LESSON_IDS);
   });
 
-  test('positions are a 1..N contiguous sequence', () => {
+  test('final positions are a 1..N contiguous sequence', () => {
     expect(rows.map((r) => r.position)).toEqual(
       ALL_LESSON_IDS.map((_, i) => i + 1)
     );
