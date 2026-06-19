@@ -160,7 +160,7 @@ setMistakePatterns((prev) => ({
 
   // Terminal screens take over the whole view.
   if (state === 'complete') {
-    return <CompletionScreen status="success" anonymous={!isAuthenticated} streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} />;
+    return <CompletionScreen status="success" anonymous={!isAuthenticated} streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} mistakePatterns={mistakePatterns}/>;
   }
   if (state === 'error') {
     return <CompletionScreen status="error" onRetry={handleRetry} />;
