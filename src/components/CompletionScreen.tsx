@@ -2,10 +2,18 @@
 
 import Link from 'next/link';
 import HeroAnimation from '../../app/components/HeroAnimation';
+import type { MistakeCategory } from "../lib/mistake-patterns";
 
 type CompletionScreenProps =
   | { status: 'loading' }
-  | { status: 'success'; streakDays: number; xpEarned: number; accuracy: number; anonymous?: boolean }
+  | {
+    status: "success";
+    streakDays: number;
+    xpEarned: number;
+    accuracy: number;
+    anonymous?: boolean;
+    mistakePatterns: Record<MistakeCategory, number>;
+  }
   | { status: 'error'; onRetry: () => void };
 
 function StatCard({ color, label, value }: { color: string; label: string; value: string }) {
@@ -22,6 +30,12 @@ function StatCard({ color, label, value }: { color: string; label: string; value
 }
 
 export default function CompletionScreen(props: CompletionScreenProps) {
+  const topMistake =
+  props.status === "success"
+    ? Object.entries(props.mistakePatterns).sort(
+        ([, countA], [, countB]) => countB - countA
+      )[0]
+    : null;
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
       {props.status === 'loading' ? (
@@ -42,6 +56,21 @@ export default function CompletionScreen(props: CompletionScreenProps) {
             <StatCard color="#58CC02" label="Accuracy" value={`${props.accuracy}%`} />
             <StatCard color="#FF9600" label="Streak" value={`🔥 ${props.streakDays}`} />
           </div>
+          {topMistake && topMistake[1] > 0 && (
+  <div className="mt-6 w-full max-w-md rounded-2xl border-2 border-[#E5E5E5] bg-white p-4 text-center">
+    <p className="text-sm font-bold uppercase tracking-wide text-[#777777]">
+      Mistake Pattern
+    </p>
+
+    <p className="mt-2 text-xl font-extrabold text-[#1F2937]">
+      {topMistake[0].replace("_", " ")}
+    </p>
+
+    <p className="mt-1 text-sm text-[#777777]">
+      {topMistake[1]} mistake{topMistake[1] === 1 ? "" : "s"}
+    </p>
+  </div>
+)}
 
           {props.anonymous ? (
             <>
