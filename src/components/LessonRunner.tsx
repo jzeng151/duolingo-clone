@@ -9,6 +9,10 @@ import FeedbackDrawer from './FeedbackDrawer';
 import CompletionScreen from './CompletionScreen';
 import { playCorrect, playWrong } from '../lib/sounds';
 import { initialLessonState, transition, type LessonState } from '../lib/lesson-state-machine';
+import {
+  getMistakeCategory,
+  type MistakeCategory,
+} from "../lib/mistake-patterns";
 
 const TOTAL_HEARTS = 5;
 const XP_PER_CORRECT = 10;
@@ -52,6 +56,15 @@ export default function LessonRunner({
   const [streakDays, setStreakDays] = useState<number | null>(null);
   const [hearts, setHearts] = useState(TOTAL_HEARTS);
   const [mistakes, setMistakes] = useState(0);
+  const [mistakePatterns, setMistakePatterns] = useState<
+  Record<MistakeCategory, number>
+>({
+  vocabulary: 0,
+  grammar: 0,
+  spelling: 0,
+  listening: 0,
+  word_order: 0,
+});
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
   const submissionLockedRef = useRef(false);
 
@@ -73,6 +86,12 @@ export default function LessonRunner({
     } else {
       setHearts((h) => Math.max(0, h - 1));
       setMistakes((m) => m + 1);
+      const mistakeCategory = getMistakeCategory(currentExercise);
+
+setMistakePatterns((prev) => ({
+  ...prev,
+  [mistakeCategory]: prev[mistakeCategory] + 1,
+}));
       playWrong();
     }
 
