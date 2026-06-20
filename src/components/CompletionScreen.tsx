@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import HeroAnimation from '../../app/components/HeroAnimation';
-import type { MistakeCategory } from "../lib/mistake-patterns";
+import { CATEGORY_LABELS, type MistakeCategory } from "../lib/mistake-patterns";
+import type { WeakCategory } from "../lib/weakness";
 
 type CompletionScreenProps =
   | { status: 'loading' }
@@ -13,6 +14,8 @@ type CompletionScreenProps =
     accuracy: number;
     anonymous?: boolean;
     mistakePatterns: Record<MistakeCategory, number>;
+    /** Cross-session weak area from the detector (authenticated users). */
+    weakCategory?: WeakCategory | null;
   }
   | { status: 'error'; onRetry: () => void };
 
@@ -56,21 +59,41 @@ export default function CompletionScreen(props: CompletionScreenProps) {
             <StatCard color="#58CC02" label="Accuracy" value={`${props.accuracy}%`} />
             <StatCard color="#FF9600" label="Streak" value={`🔥 ${props.streakDays}`} />
           </div>
-          {topMistake && topMistake[1] > 0 && (
-  <div className="mt-6 w-full max-w-md rounded-2xl border-2 border-[#E5E5E5] bg-white p-4 text-center">
-    <p className="text-sm font-bold uppercase tracking-wide text-[#777777]">
-      Mistake Pattern
-    </p>
-
-    <p className="mt-2 text-xl font-extrabold text-[#1F2937]">
-      {topMistake[0].replace("_", " ")}
-    </p>
-
-    <p className="mt-1 text-sm text-[#777777]">
-      {topMistake[1]} mistake{topMistake[1] === 1 ? "" : "s"}
-    </p>
-  </div>
-)}
+          {props.status === "success" && props.weakCategory ? (
+            <div className="mt-6 w-full max-w-md rounded-2xl border-2 border-[#FFC800] bg-white p-4 text-center">
+              <p className="text-sm font-bold uppercase tracking-wide text-[#777777]">
+                Your weak area
+              </p>
+              <p className="mt-2 text-xl font-extrabold text-[#1F2937]">
+                {CATEGORY_LABELS[props.weakCategory.category]}
+              </p>
+              <p className="mt-1 text-sm text-[#777777]">
+                {props.weakCategory.count} recent mistake
+                {props.weakCategory.count === 1 ? "" : "s"}
+              </p>
+              <Link
+                href={`/lesson?practice=${props.weakCategory.category}`}
+                className="btn-shadow-green mt-4 inline-block w-full rounded-2xl bg-[#58CC02] px-6 py-3 text-base font-bold uppercase tracking-wide text-white"
+              >
+                Practice this
+              </Link>
+            </div>
+          ) : (
+            topMistake &&
+            topMistake[1] > 0 && (
+              <div className="mt-6 w-full max-w-md rounded-2xl border-2 border-[#E5E5E5] bg-white p-4 text-center">
+                <p className="text-sm font-bold uppercase tracking-wide text-[#777777]">
+                  Mistake Pattern
+                </p>
+                <p className="mt-2 text-xl font-extrabold text-[#1F2937]">
+                  {CATEGORY_LABELS[topMistake[0] as MistakeCategory]}
+                </p>
+                <p className="mt-1 text-sm text-[#777777]">
+                  {topMistake[1]} mistake{topMistake[1] === 1 ? "" : "s"}
+                </p>
+              </div>
+            )
+          )}
 
           {props.anonymous ? (
             <>

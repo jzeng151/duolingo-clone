@@ -357,18 +357,14 @@ export default function QuestionDisplay({
               alt={CHARACTERS[exercise.character ?? 'duo'].name}
               className="h-20 w-20 shrink-0 object-contain"
             />
-            <button
-              type="button"
-              onClick={() => playWord(exercise.lead)}
-              className="relative mb-4 flex items-center gap-2 rounded-2xl border-2 border-[#E5E5E5] bg-white px-4 py-3 text-left"
-            >
+            <div className="relative mb-4 flex items-center gap-2 rounded-2xl border-2 border-[#E5E5E5] bg-white px-4 py-3 text-left">
               <span
                 className="absolute -left-2 bottom-3 h-3 w-3 rotate-45 border-b-2 border-l-2 border-[#E5E5E5] bg-white"
                 aria-hidden="true"
               />
               <Speaker text={exercise.lead} slow className="!h-8 !w-8 !border-b-2" />
               <span className="text-lg font-bold text-[#4B4B4B]">{exercise.lead}</span>
-            </button>
+            </div>
           </div>
 
           {/* Reply options */}
