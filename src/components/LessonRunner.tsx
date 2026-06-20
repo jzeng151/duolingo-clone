@@ -13,6 +13,8 @@ import {
   getMistakeCategory,
   type MistakeCategory,
 } from "../lib/mistake-patterns";
+import { logMistakes } from "../actions/logMistakes";
+import type { WeakCategory } from "../lib/weakness";
 
 const TOTAL_HEARTS = 5;
 const XP_PER_CORRECT = 10;
@@ -34,11 +36,17 @@ export default function LessonRunner({
   exercises,
   onComplete,
   isAuthenticated = true,
+  lessonId = null,
+  practiceCategory = null,
 }: {
   exercises: Exercise[];
   onComplete: (payload: { xpEarned: number }) => Promise<OnCompleteResult>;
   /** Anonymous learners finish the lesson locally and are then asked to sign up. */
   isAuthenticated?: boolean;
+  /** Course lesson id, used to attribute logged mistakes. Null in practice mode. */
+  lessonId?: string | null;
+  /** Set when this is a targeted-practice session for a weak category. */
+  practiceCategory?: MistakeCategory | null;
 }) {
   // Start the lesson immediately: run the machine's START transition once so
   // 'idle' is never rendered (avoids a setState-in-effect on mount).
@@ -54,6 +62,7 @@ export default function LessonRunner({
   const [step, setStep] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [streakDays, setStreakDays] = useState<number | null>(null);
+  const [weakCategories, setWeakCategories] = useState<WeakCategory[]>([]);
   const [hearts, setHearts] = useState(TOTAL_HEARTS);
   const [mistakes, setMistakes] = useState(0);
   const [mistakePatterns, setMistakePatterns] = useState<
@@ -124,9 +133,34 @@ setMistakePatterns((prev) => ({
   }
 
   async function persistResults() {
+    const isPractice = practiceCategory != null;
+
     // Anonymous run: nothing to save server-side. Finish locally; the
     // completion screen then invites the learner to create an account.
     if (!isAuthenticated) {
+      setStreakDays(0);
+      setState((prev) => transition(prev, { type: 'SAVE_SUCCESS', xpEarned, newStreak: 0 }).nextState);
+      return;
+    }
+
+    // Log this session's mistakes for the pattern detector and pick up the
+    // learner's current weak areas. Detector logging must never block lesson
+    // completion, so failures here are swallowed.
+    try {
+      const events = (
+        Object.entries(mistakePatterns) as [MistakeCategory, number][]
+      ).flatMap(([category, count]) =>
+        Array.from({ length: count }, () => category),
+      );
+      const weak = await logMistakes(isPractice ? null : lessonId, events);
+      setWeakCategories(weak);
+    } catch {
+      // ignore — the completion screen falls back to the per-lesson summary.
+    }
+
+    // Practice sessions are reviews: they don't complete a course lesson or
+    // touch XP/streak server-side.
+    if (isPractice) {
       setStreakDays(0);
       setState((prev) => transition(prev, { type: 'SAVE_SUCCESS', xpEarned, newStreak: 0 }).nextState);
       return;
@@ -160,7 +194,7 @@ setMistakePatterns((prev) => ({
 
   // Terminal screens take over the whole view.
   if (state === 'complete') {
-    return <CompletionScreen status="success" anonymous={!isAuthenticated} streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} mistakePatterns={mistakePatterns}/>;
+    return <CompletionScreen status="success" anonymous={!isAuthenticated} streakDays={streakDays ?? 0} xpEarned={xpEarned} accuracy={accuracy} mistakePatterns={mistakePatterns} weakCategory={weakCategories[0] ?? null} />;
   }
   if (state === 'error') {
     return <CompletionScreen status="error" onRetry={handleRetry} />;

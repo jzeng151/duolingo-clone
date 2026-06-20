@@ -3,6 +3,9 @@ import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '../../lib/supabase-server';
 import { UNITS, computeStates, type CourseUnit, type NodeIcon, type NodeState } from '../../src/content/course';
+import { fetchWeakCategories } from '../../src/lib/mistakes';
+import { CATEGORY_LABELS } from '../../src/lib/mistake-patterns';
+import type { WeakCategory } from '../../src/lib/weakness';
 import SignOutButton from '../components/SignOutButton';
 
 /* The /learn dashboard — a faithful clone of Duolingo's web learn screen:
@@ -39,6 +42,8 @@ export default async function LearnPage() {
   const completed = new Set((completions ?? []).map((row) => row.lesson_id as string));
   const states = computeStates(completed);
 
+  const weakCategories = await fetchWeakCategories();
+
   return (
     <div className="flex min-h-screen w-full bg-white text-[#4B4B4B]">
       <SideNav />
@@ -48,6 +53,7 @@ export default async function LearnPage() {
 
         <main className="flex-1 px-4 pb-24 pt-4 sm:px-6 xl:pb-12">
           <div className="mx-auto w-full max-w-[600px]">
+            <WeakAreas categories={weakCategories} />
             {UNITS.map((unit, i) => (
               <Unit key={unit.label} unit={unit} states={states} stagger={i % 2 === 1} />
             ))}
@@ -58,6 +64,41 @@ export default async function LearnPage() {
         <RightRail streak={currentStreak} xp={totalXp} />
       </div>
     </div>
+  );
+}
+
+/* ─────────────────────── Weak areas (detector) ────────────────────────── */
+
+/* The learner's current weak categories, with one-tap targeted practice.
+   Hidden entirely when nothing is flagged, so a healthy learner sees no noise. */
+function WeakAreas({ categories }: { categories: WeakCategory[] }) {
+  if (categories.length === 0) return null;
+
+  return (
+    <section className="mb-6 rounded-2xl border-2 border-[#FFC800] bg-white p-5">
+      <h2 className="text-lg font-extrabold text-[#3C3C3C]">Your weak areas</h2>
+      <p className="mt-1 text-sm text-[#777777]">
+        Categories you&apos;ve missed most recently. Practice to clear them.
+      </p>
+      <ul className="mt-4 space-y-3">
+        {categories.map((weak) => (
+          <li key={weak.category} className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-[#4B4B4B]">{CATEGORY_LABELS[weak.category]}</p>
+              <p className="text-xs text-[#777777]">
+                {weak.count} recent mistake{weak.count === 1 ? '' : 's'}
+              </p>
+            </div>
+            <Link
+              href={`/lesson?practice=${weak.category}`}
+              className="btn-shadow-green shrink-0 rounded-2xl bg-[#58CC02] px-4 py-2 text-sm font-bold uppercase tracking-wide text-white"
+            >
+              Practice
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

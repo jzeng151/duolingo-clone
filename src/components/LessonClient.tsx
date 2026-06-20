@@ -1,9 +1,12 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import Link from 'next/link';
 import LessonRunner from './LessonRunner';
 import { getLessonById } from '../content/spanish-lessons';
 import { getLearningReason, type LearningReason } from '../lib/onboarding';
+import { getCategoryPracticePool } from '../lib/category-practice';
+import { CATEGORY_LABELS, type MistakeCategory } from '../lib/mistake-patterns';
 
 type OnCompleteResult = { xpEarned: number; newStreak: number };
 
@@ -23,16 +26,45 @@ export default function LessonClient({
   lessonId,
   isAuthenticated,
   onComplete,
+  practiceCategory = null,
 }: {
   lessonId: string;
   isAuthenticated: boolean;
   onComplete: (payload: { xpEarned: number }) => Promise<OnCompleteResult>;
+  /** When set, this is a targeted-practice session for a weak category. */
+  practiceCategory?: MistakeCategory | null;
 }) {
   const reason = useSyncExternalStore<LearningReason | null>(
     noopSubscribe,
     () => getLearningReason(),
     () => null,
   );
+
+  // Targeted practice is drawn from the whole course by category, so it does
+  // not depend on the onboarding reason and can render immediately.
+  if (practiceCategory) {
+    const pool = getCategoryPracticePool(practiceCategory);
+    if (pool.length === 0) {
+      return (
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <p className="text-lg font-bold text-[#4B4B4B]">
+            No practice available for {CATEGORY_LABELS[practiceCategory]} yet.
+          </p>
+          <Link href="/learn" className="text-sm font-bold uppercase tracking-wide text-[#1CB0F6]">
+            Back to learn
+          </Link>
+        </div>
+      );
+    }
+    return (
+      <LessonRunner
+        exercises={pool}
+        isAuthenticated={isAuthenticated}
+        onComplete={onComplete}
+        practiceCategory={practiceCategory}
+      />
+    );
+  }
 
   if (reason === null) {
     return (
@@ -43,5 +75,12 @@ export default function LessonClient({
   }
 
   const exercises = getLessonById(lessonId, reason);
-  return <LessonRunner exercises={exercises} isAuthenticated={isAuthenticated} onComplete={onComplete} />;
+  return (
+    <LessonRunner
+      exercises={exercises}
+      isAuthenticated={isAuthenticated}
+      onComplete={onComplete}
+      lessonId={lessonId}
+    />
+  );
 }

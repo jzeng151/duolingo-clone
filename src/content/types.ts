@@ -13,9 +13,11 @@
    Duolingo's proprietary noun illustrations.
    ═══════════════════════════════════════════════════════════════ */
 
+import type { MistakeCategory } from '../lib/mistake-patterns';
+
 export type CharacterId = 'duo' | 'neutral';
 
-export type Exercise =
+type ExerciseContent =
   | {
       type: 'select_image';
       /** English word the learner is hunting for, e.g. "apple". The cards show the Spanish words. */
@@ -69,6 +71,12 @@ export type Exercise =
       /** The correct reply. */
       answer: string;
     };
+
+/** A playable exercise plus an optional skill-category override. When
+    `category` is absent, getMistakeCategory infers it from `type`. This lets
+    content hand-tag the skill a wrong answer reflects (e.g. a gender slip)
+    where the exercise format alone would mis-attribute it. */
+export type Exercise = ExerciseContent & { category?: MistakeCategory };
 
 export const CHARACTERS: Record<CharacterId, { src: string; name: string }> = {
   duo: { src: '/assets/mascot_excited.svg', name: 'Duo' },
