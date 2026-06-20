@@ -59,6 +59,7 @@ export default async function LessonPage({
   return (
     <main className="flex flex-1 flex-col bg-white">
       <LessonClient
+        key={practiceCategory ? `practice-${practiceCategory}` : lessonId}
         lessonId={lessonId}
         isAuthenticated={isAuthenticated}
         onComplete={handleComplete}
