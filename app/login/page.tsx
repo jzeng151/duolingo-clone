@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "../../lib/supabase-browser";
 import { syncOnboarding } from "../../src/lib/syncOnboarding";
-import { AuthShell, OAuthButtons, authInputClass } from "../components/AuthShell";
+import { AuthShell, AuthLoading, OAuthButtons, authInputClass } from "../components/AuthShell";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,11 +13,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
     supabaseBrowser.auth.getSession().then(({ data }) => {
       if (data.session) {
         router.replace("/learn");
+      } else {
+        setCheckingSession(false);
       }
     });
   }, [router]);
@@ -49,6 +52,10 @@ export default function LoginPage() {
 
   return (
     <AuthShell switchHref="/signup" switchLabel="Sign up">
+      {checkingSession ? (
+        <AuthLoading />
+      ) : (
+        <>
       <h1 className="mb-6 text-center text-2xl font-extrabold text-[#3C3C3C]">Log in</h1>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -102,6 +109,8 @@ export default function LoginPage() {
           Sign up
         </Link>
       </p>
+        </>
+      )}
     </AuthShell>
   );
 }

@@ -44,6 +44,17 @@ export function AuthShell({
   );
 }
 
+/* Holding state shown inside AuthShell while the existing session is being
+   confirmed, so a returning user never sees the form flash before the redirect
+   to /learn fires. */
+export function AuthLoading() {
+  return (
+    <div className="flex justify-center py-10" role="status" aria-label="Loading">
+      <span className="h-8 w-8 animate-spin rounded-full border-4 border-[#E5E5E5] border-t-[#58CC02]" />
+    </div>
+  );
+}
+
 /* Cosmetic social sign-in. The buttons are decorative per the design brief:
    they carry no auth handler, only the divider + Facebook/Google styling. */
 export function OAuthButtons() {
